@@ -1,0 +1,13 @@
+services:
+  postgres:
+    image: postgres:15
+    container_name: 'mfp-postgres'
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_DB: "mfp"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+      PG_DATA: /var/lib/postgresql/data/db-files
+    volumes:
+      - ./postgres-init:/docker-entrypoint-initdb.d
