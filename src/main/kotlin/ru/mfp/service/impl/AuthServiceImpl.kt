@@ -15,6 +15,8 @@ import org.springframework.http.HttpStatus
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import ru.mfp.exception.IllegalServerStateException
+import ru.mfp.exception.RegistrationException
 import java.nio.CharBuffer
 
 private val log = KotlinLogging.logger { }
@@ -37,7 +39,7 @@ class AuthServiceImpl(
             )
         ) {
             log.error { "Attempt to create account with existent login: ${signUpDto.login}" }
-            throw AuthorizationException(HttpStatus.BAD_REQUEST, "User with login ${signUpDto.login} already exists")
+            throw RegistrationException(HttpStatus.BAD_REQUEST, "User with login ${signUpDto.login} already exists")
         }
         log.info { "Saving new account with login: ${signUpDto.login}" }
         return mapper.toDto(repository.save(mapper.fromDto(signUpDto)))
@@ -54,6 +56,6 @@ class AuthServiceImpl(
         if (account.id != null && account.login != null) {
             return TokenDto(tokenProvider.getToken(JwtAuthentication(account.id!!, account.login!!)))
         }
-        throw AuthorizationException(HttpStatus.INTERNAL_SERVER_ERROR, "User data not found in database")
+        throw IllegalServerStateException("User data not found in database")
     }
 }

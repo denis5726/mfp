@@ -8,8 +8,15 @@
             <column name="login" type="varchar(255)">
                 <constraints unique="true" uniqueConstraintName="user_login_pkey"/>
             </column>
-            <column name="password_hash" type="varchar(255)"/>
-            <column name="registered_at" type="timestamptz"/>
+            <column name="password_hash" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="registered_at" type="timestamptz">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
     </changeSet>
     <changeSet id="denis5726" author="insert-admin-user">
@@ -17,7 +24,8 @@
             <column name="user_id">15d30e1f-54bd-495b-a878-a60c0f8cd114</column>
             <column name="login">dengordeev1@gmail.com</column>
             <column name="password_hash">$2y$12$DoFu56yCIJFFD0p/e.Wb6O20qNGCSajOlOXn7zjvgJ5qDzleNqlWG</column>
-            <column name="registered_at">2023-11-14T17:22:21.047Z</column>
+            <column name="status">NORMAL</column>
+            <column name="registered_at">2023-11-14T17:22:21.047412Z</column>
         </insert>
     </changeSet>
 </databaseChangeLog>

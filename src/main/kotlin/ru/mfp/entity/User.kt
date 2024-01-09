@@ -2,11 +2,13 @@ package ru.mfp.entity
 
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
+import jakarta.persistence.EnumType
+import jakarta.persistence.Enumerated
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.Table
-import org.springframework.data.annotation.CreatedDate
+import org.hibernate.annotations.CreationTimestamp
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -19,7 +21,9 @@ data class User(
     var id: UUID?,
     var login: String?,
     var passwordHash: String?,
-    @CreatedDate
+    @Enumerated(EnumType.STRING)
+    var status: UserStatus?,
+    @CreationTimestamp
     var registeredAt: LocalDateTime?
 ) {
     override fun equals(other: Any?): Boolean {
@@ -33,6 +37,6 @@ data class User(
     override fun hashCode(): Int = javaClass.hashCode()
 
     override fun toString(): String {
-        return this::class.simpleName + "(id = $id , login = $login , passwordHash = $passwordHash , registeredAt = $registeredAt )"
+        return this::class.simpleName + "(id=$id, login=$login, passwordHash=$passwordHash, registeredAt=$registeredAt)"
     }
 }

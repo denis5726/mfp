@@ -1,36 +1,39 @@
 package ru.mfp.entity
 
-import jakarta.persistence.*
+import jakarta.persistence.Column
+import jakarta.persistence.Entity
+import jakarta.persistence.GeneratedValue
+import jakarta.persistence.GenerationType
+import jakarta.persistence.Id
+import jakarta.persistence.JoinColumn
+import jakarta.persistence.ManyToOne
 import org.hibernate.annotations.CreationTimestamp
-import java.math.BigDecimal
 import java.time.LocalDateTime
 import java.util.*
 
 @Entity
-data class Account(
+data class EmailVerificationCode(
     @Id
-    @Column(name = "account_id")
+    @Column(name = "email_verification_code_id")
     @GeneratedValue(strategy = GenerationType.UUID)
     var id: UUID?,
     @ManyToOne
     @JoinColumn(name = "user_id")
     var user: User?,
-    var amount: BigDecimal?,
-    var currency: Currency?,
+    var value: String?,
     @CreationTimestamp
     var createdAt: LocalDateTime?
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other == null) return false
-        if (other !is Account) return false
+        if (other !is EmailVerificationCode) return false
 
         return id != null && id == other.id
     }
 
     override fun hashCode(): Int = javaClass.hashCode()
-
     override fun toString(): String {
-        return this::class.simpleName + "(user =$user, amount=$amount, currency=$currency)"
+        return this::class.simpleName + "(id=$id, user=$user, value=$value, createdAt=$createdAt)"
     }
 }
