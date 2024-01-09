@@ -10,6 +10,7 @@ spring:
     username: postgres
     password: postgres
   jpa:
+    show-sql: true
     hibernate:
       ddl-auto: none
     properties:
@@ -23,3 +24,15 @@ spring:
     password: postgres
     change-log: db/changeLog/db.changelog-master.xml
     drop-first: true
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: flightsapplicationemailsender@gmail.com
+    password: ${FLIGHTS_EMAIL_APPLICATION_PASSWORD}
+    from: Flights Application
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true

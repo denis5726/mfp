@@ -1,13 +1,13 @@
 package ru.mfp.service.impl
 
-import ru.mfp.dto.AccountDto
+import ru.mfp.dto.UserDto
 import ru.mfp.dto.SignInDto
 import ru.mfp.dto.SignUpDto
 import ru.mfp.dto.TokenDto
 import ru.mfp.exception.AuthorizationException
-import ru.mfp.mapper.AccountMapper
+import ru.mfp.mapper.UserMapper
 import ru.mfp.model.JwtAuthentication
-import ru.mfp.repository.AccountRepository
+import ru.mfp.repository.UserRepository
 import ru.mfp.service.AuthService
 import ru.mfp.service.TokenProvider
 import mu.KotlinLogging
@@ -22,8 +22,8 @@ private val log = KotlinLogging.logger { }
 @Service
 class AuthServiceImpl(
     private val tokenProvider: TokenProvider,
-    private val repository: AccountRepository,
-    private val mapper: AccountMapper,
+    private val repository: UserRepository,
+    private val mapper: UserMapper,
     private val passwordEncoder: PasswordEncoder,
     private val emptyLoginExceptionSupplier: () -> Nothing = {
         throw AuthorizationException(HttpStatus.BAD_REQUEST, "Login must not be null")
@@ -31,7 +31,7 @@ class AuthServiceImpl(
 ) : AuthService {
 
     @Transactional
-    override fun signUp(signUpDto: SignUpDto): AccountDto {
+    override fun signUp(signUpDto: SignUpDto): UserDto {
         if (repository.existsByLogin(
                 signUpDto.login ?: emptyLoginExceptionSupplier.invoke()
             )

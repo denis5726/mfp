@@ -1,14 +1,15 @@
 package ru.mfp.mapper
 
-import ru.mfp.dto.AccountDto
-import ru.mfp.dto.SignUpDto
-import ru.mfp.entity.Account
 import org.mapstruct.Mapper
+import ru.mfp.dto.AccountDto
+import ru.mfp.entity.Account
 
 @Mapper
 interface AccountMapper {
 
-    fun toDto(account: Account) : AccountDto
+    fun toDto(account: Account): AccountDto
 
-    fun fromDto(signUpDto: SignUpDto) : Account
+    fun toDtoList(account: List<Account>): List<AccountDto>
+
+    fun fromDto(accountDto: AccountDto): Account
 }

@@ -1,12 +1,12 @@
 package ru.mfp.repository
 
-import ru.mfp.entity.Account
 import org.springframework.data.jpa.repository.JpaRepository
-import java.util.*
+import org.springframework.data.jpa.repository.Query
+import ru.mfp.entity.Account
+import java.util.UUID
 
 interface AccountRepository : JpaRepository<Account, UUID> {
 
-    fun existsByLogin(login: String): Boolean
-
-    fun findByLogin(login: String) : Account?
+    @Query("SELECT a FROM Account a WHERE a.user.id = :userId")
+    fun findByUser(userId: UUID): List<Account>
 }

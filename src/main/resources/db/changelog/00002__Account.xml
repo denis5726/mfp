@@ -1,0 +1,44 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+    <changeSet author="denis5726" id="init">
+        <preConditions>
+            <tableExists tableName="user"/>
+        </preConditions>
+
+        <createTable tableName="account">
+            <column name="account_id" type="uuid">
+                <constraints primaryKey="true" primaryKeyName="account_pkey"/>
+            </column>
+            <column name="user_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="amount" type="decimal">
+                <constraints nullable="false"/>
+            </column>
+            <column name="currency" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="timestamptz">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="account"
+                                 baseColumnNames="user_id"
+                                 constraintName="account_user_id_fkey"
+                                 referencedTableName="user"
+                                 referencedColumnNames="user_id"/>
+    </changeSet>
+
+    <changeSet id="denis5726" author="insert-user-account">
+        <insert tableName="account">
+            <column name="account_id">fc5f2703-664f-46ea-baed-3d92db2a786c</column>
+            <column name="user_id">15d30e1f-54bd-495b-a878-a60c0f8cd114</column>
+            <column name="amount">1000.00</column>
+            <column name="currency">RUB</column>
+            <column name="created_at">2023-11-14T17:22:21.123Z</column>
+        </insert>
+    </changeSet>
+</databaseChangeLog>
