@@ -1,11 +1,10 @@
 package ru.mfp.service
 
-import ru.mfp.dto.EmailVerificationCodeDto
 import ru.mfp.model.JwtAuthentication
 
 interface EmailVerificationService {
 
-    fun generateVerificationCode(authentication: JwtAuthentication): EmailVerificationCodeDto
+    fun generateVerificationCode(authentication: JwtAuthentication)
 
-    fun verifyCode(authentication: JwtAuthentication, code: String)
+    fun verifyCode(code: String, authentication: JwtAuthentication)
 }

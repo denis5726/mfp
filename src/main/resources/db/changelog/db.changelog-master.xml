@@ -5,4 +5,5 @@
 
     <include file="00001__User.xml" relativeToChangelogFile="true"/>
     <include file="00002__Account.xml" relativeToChangelogFile="true"/>
+    <include file="00003__EmailVerificationCode.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

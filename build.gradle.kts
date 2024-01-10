@@ -29,6 +29,8 @@ repositories {
 }
 
 dependencies {
+	implementation("ru.mfp:stub:$version")
+
 	implementation("org.springframework.boot:spring-boot-starter-actuator")
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework.boot:spring-boot-starter-data-rest")
@@ -40,7 +42,7 @@ dependencies {
 	implementation("org.liquibase:liquibase-core")
 	implementation("org.mapstruct:mapstruct:$mapStructVersion")
 	implementation("io.jsonwebtoken:jjwt:$jjwtVersion")
-	implementation("io.github.microutils:kotlin-logging-jvm:2.0.11")
+	implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
 	runtimeOnly("org.postgresql:postgresql")
 	kapt("org.mapstruct:mapstruct-processor:$mapStructVersion")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")

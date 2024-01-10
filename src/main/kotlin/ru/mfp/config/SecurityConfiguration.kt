@@ -16,7 +16,9 @@ import org.springframework.security.web.SecurityFilterChain
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
-class SecurityConfiguration(private val securityConfigurer: ru.mfp.config.SecurityConfigurer) {
+class SecurityConfiguration(
+    private val securityConfigurer: SecurityConfigurer
+) {
 
     @Bean
     @Throws(Exception::class)

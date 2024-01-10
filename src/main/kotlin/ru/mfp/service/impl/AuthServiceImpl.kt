@@ -23,13 +23,15 @@ private val log = KotlinLogging.logger { }
 
 @Service
 class AuthServiceImpl(
+    private val emailRegex: Regex = Regex("^(?=.{1,64}@)[A-Za-z0-9_-]+(\\\\.[A-Za-z0-9_-]+)*@" +
+            "[^-][A-Za-z0-9-]+(\\\\.[A-Za-z0-9-]+)*(\\\\.[A-Za-z]{2,})\$"),
+    private val emptyLoginExceptionSupplier: () -> Nothing = {
+        throw AuthorizationException(HttpStatus.BAD_REQUEST, "Login must not be null")
+    },
     private val tokenProvider: TokenProvider,
     private val repository: UserRepository,
     private val mapper: UserMapper,
-    private val passwordEncoder: PasswordEncoder,
-    private val emptyLoginExceptionSupplier: () -> Nothing = {
-        throw AuthorizationException(HttpStatus.BAD_REQUEST, "Login must not be null")
-    }
+    private val passwordEncoder: PasswordEncoder
 ) : AuthService {
 
     @Transactional
@@ -40,6 +42,10 @@ class AuthServiceImpl(
         ) {
             log.error { "Attempt to create account with existent login: ${signUpDto.login}" }
             throw RegistrationException(HttpStatus.BAD_REQUEST, "User with login ${signUpDto.login} already exists")
+        }
+        if (!emailRegex.matches(signUpDto.login)) {
+            log.error { "Provided invalid email address: ${signUpDto.login}" }
+            throw RegistrationException(HttpStatus.BAD_REQUEST, "Invalid email address!")
         }
         log.info { "Saving new account with login: ${signUpDto.login}" }
         return mapper.toDto(repository.save(mapper.fromDto(signUpDto)))
