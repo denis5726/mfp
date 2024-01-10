@@ -2,28 +2,26 @@ package ru.mfp.entity
 
 import jakarta.persistence.*
 import org.hibernate.annotations.CreationTimestamp
-import java.math.BigDecimal
 import java.time.LocalDateTime
 import java.util.*
 
 @Entity
-data class Account(
+data class Card(
     @Id
-    @Column(name = "account_id")
+    @Column(name = "card_id")
     @GeneratedValue(strategy = GenerationType.UUID)
     var id: UUID?,
     @ManyToOne
     @JoinColumn(name = "user_id")
     var user: User?,
-    var amount: BigDecimal?,
-    var currency: Currency?,
+    var accountId: UUID?,
     @CreationTimestamp
     var createdAt: LocalDateTime?
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other == null) return false
-        if (other !is Account) return false
+        if (other !is Card) return false
 
         return id != null && id == other.id
     }
@@ -31,6 +29,6 @@ data class Account(
     override fun hashCode(): Int = javaClass.hashCode()
 
     override fun toString(): String {
-        return this::class.simpleName + "(id=$id, amount=$amount, currency=$currency, createdAt=$createdAt)"
+        return this::class.simpleName + "(id=$id, accountId=$accountId, createdAt=$createdAt)"
     }
 }

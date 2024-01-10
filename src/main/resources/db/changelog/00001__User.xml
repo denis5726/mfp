@@ -1,5 +1,6 @@
 <?xml version="1.1" encoding="UTF-8" standalone="no"?>
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
     <changeSet author="denis5726" id="init">
         <createTable tableName="user">
             <column name="user_id" type="uuid">
@@ -19,6 +20,7 @@
             </column>
         </createTable>
     </changeSet>
+
     <changeSet id="denis5726" author="insert-admin-user">
         <insert tableName="user">
             <column name="user_id">15d30e1f-54bd-495b-a878-a60c0f8cd114</column>

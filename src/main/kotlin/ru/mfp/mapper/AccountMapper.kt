@@ -8,9 +8,9 @@ import ru.mfp.entity.Account
 @Mapper
 interface AccountMapper {
 
-    @Mapping(target = "user", source = "user.id")
+    @Mapping(target = "userId", source = "user.id")
     fun toDto(account: Account): AccountDto
 
-    @Mapping(target = "user", source = "user.id")
+    @Mapping(target = "userId", source = "user.id")
     fun toDtoList(account: List<Account>): List<AccountDto>
 }

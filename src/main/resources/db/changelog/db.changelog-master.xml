@@ -6,4 +6,7 @@
     <include file="00001__User.xml" relativeToChangelogFile="true"/>
     <include file="00002__Account.xml" relativeToChangelogFile="true"/>
     <include file="00003__EmailVerificationCode.xml" relativeToChangelogFile="true"/>
+    <include file="00004__Card.xml" relativeToChangelogFile="true"/>
+    <include file="00005__AccountHistoryRecord.xml" relativeToChangelogFile="true"/>
+    <include file="00006__Deposit.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

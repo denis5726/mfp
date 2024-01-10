@@ -34,6 +34,6 @@ data class EmailVerificationCode(
 
     override fun hashCode(): Int = javaClass.hashCode()
     override fun toString(): String {
-        return this::class.simpleName + "(id=$id, user=$user, value=$value, createdAt=$createdAt)"
+        return this::class.simpleName + "(id=$id, value=$value, createdAt=$createdAt)"
     }
 }

@@ -1,11 +1,13 @@
-package ru.mfp.stub.dto
+package ru.mfp.dto
 
 import java.time.LocalDateTime
 import java.util.*
 
-data class PaymentDto(
+data class DepositDto(
     val paymentId: UUID,
     val operationId: UUID,
+    val accountId: UUID,
+    val cardId: UUID,
     val decision: Boolean,
     val description: String,
     val createdAt: LocalDateTime

@@ -1,18 +1,20 @@
 package ru.mfp.stub
 
 import jakarta.annotation.PostConstruct
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import ru.mfp.stub.dto.CreatedPaymentDto
-import ru.mfp.stub.dto.PaymentDto
+import ru.mfp.dto.CreatedPaymentDto
+import ru.mfp.dto.PaymentDto
 import java.math.BigDecimal
 import java.time.LocalDateTime
 import java.util.*
 
 @RestController
 @RequestMapping("/stub")
+@ConditionalOnProperty(value = ["mfp.stub.payment.enabled"], havingValue = "true")
 class PaymentController {
     private val payments = mutableListOf<CreatedPaymentDto>()
     private val data = mutableListOf<Account>()
@@ -22,8 +24,15 @@ class PaymentController {
     fun init() {
         data.add(
             Account(
-                UUID.fromString("11111111-2222-3333-444444444444"),
+                UUID.fromString("11111111-2222-3333-4444-555555555555"),
                 BigDecimal.valueOf(100000L),
+                Currency.getInstance("RUB")
+            )
+        )
+        data.add(
+            Account(
+                UUID.fromString("22222222-3333-4444-5555-666666666666"),
+                BigDecimal.valueOf(1000L),
                 Currency.getInstance("RUB")
             )
         )
@@ -43,6 +52,12 @@ class PaymentController {
         if (amount <= zero) {
             return createResponse(createdPaymentDto, false, "Amount must be positive number")
         }
+        val currency: Currency
+        try {
+            currency = Currency.getInstance(createdPaymentDto.currency)
+        } catch (e: IllegalArgumentException) {
+            return createResponse(createdPaymentDto, false, "Invalid payment currency")
+        }
         if (payments.stream().anyMatch {it.id == createdPaymentDto.id}) {
             return createResponse(createdPaymentDto, false, "Payment was already processed")
         }
@@ -54,6 +69,9 @@ class PaymentController {
         val accountTo = data.stream().filter { it.id == createdPaymentDto.accountTo }.findAny().orElseThrow()
         if (accountFrom.currency != accountTo.currency) {
             return createResponse(createdPaymentDto, false, "Accounts currency are not equal")
+        }
+        if (currency != accountFrom.currency) {
+            return createResponse(createdPaymentDto, false, "Currency are not supported for this account")
         }
         if (accountFrom.amount - amount < zero) {
             return createResponse(createdPaymentDto, false, "AccountFrom doesn't have enough of money")

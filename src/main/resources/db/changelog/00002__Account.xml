@@ -2,6 +2,7 @@
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
     <changeSet author="denis5726" id="init">
         <preConditions>
             <tableExists tableName="user"/>
@@ -36,7 +37,7 @@
         <insert tableName="account">
             <column name="account_id">fc5f2703-664f-46ea-baed-3d92db2a786c</column>
             <column name="user_id">15d30e1f-54bd-495b-a878-a60c0f8cd114</column>
-            <column name="amount">1000.00</column>
+            <column name="amount">0.00</column>
             <column name="currency">RUB</column>
             <column name="created_at">2023-11-14T17:22:21.123431Z</column>
         </insert>

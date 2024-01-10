@@ -1,3 +1,15 @@
+mfp:
+  stub:
+    payment:
+      enabled: true
+
+  payment:
+    main-bank-account-id: 11111111-2222-3333-4444-555555555555
+    url: http://localhost:${server.port}
+    api:
+      create-account: /stub/accounts
+      create-payment: /stub/payments
+
 jwt:
   header: Authorization
   expiration: 86400
