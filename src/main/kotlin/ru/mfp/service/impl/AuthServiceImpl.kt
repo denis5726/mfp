@@ -23,9 +23,8 @@ private val log = KotlinLogging.logger { }
 
 @Service
 class AuthServiceImpl(
-    // TODO fix regex
-    private val emailRegex: Regex = Regex("^(?=.{1,64}@)[A-Za-z0-9_-]+(\\\\.[A-Za-z0-9_-]+)*@" +
-            "[^-][A-Za-z0-9-]+(\\\\.[A-Za-z0-9-]+)*(\\\\.[A-Za-z]{2,})\$"),
+    private val emailRegex: Regex = Regex("^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@" +
+            "[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})\$"),
     private val emptyEmailExceptionSupplier: () -> Nothing = {
         throw AuthorizationException(HttpStatus.BAD_REQUEST, "Email must not be null")
     },
