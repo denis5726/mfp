@@ -6,5 +6,5 @@ import java.util.*
 
 interface AccountRepository : JpaRepository<Account, UUID> {
 
-    fun findByUserId(userId: UUID): List<Account>
+    fun findByUserIdOrderByCreatedAtDesc(userId: UUID): List<Account>
 }

@@ -1,7 +1,7 @@
 package ru.mfp.rest
 
 import org.springframework.web.bind.annotation.*
-import ru.mfp.dto.CreatedAccountDto
+import ru.mfp.dto.AccountCreatingRequestDto
 import ru.mfp.model.JwtAuthentication
 import ru.mfp.service.AccountService
 
@@ -16,7 +16,7 @@ class AccountController(
 
     @PostMapping
     fun addAccount(
-        @RequestBody createdAccountDto: CreatedAccountDto,
+        @RequestBody accountCreatingRequestDto: AccountCreatingRequestDto,
         authentication: JwtAuthentication
-    ) = accountService.addAccount(createdAccountDto, authentication)
+    ) = accountService.addAccount(accountCreatingRequestDto, authentication)
 }

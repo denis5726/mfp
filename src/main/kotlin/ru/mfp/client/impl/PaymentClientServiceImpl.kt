@@ -5,8 +5,8 @@ import org.springframework.web.client.RestTemplate
 import org.springframework.web.client.postForObject
 import ru.mfp.client.PaymentClientService
 import ru.mfp.config.rest.PaymentIntegrationProperties
-import ru.mfp.dto.CreatedAccountDto
-import ru.mfp.dto.CreatedPaymentDto
+import ru.mfp.dto.AccountCreatingRequestDto
+import ru.mfp.dto.PaymentCreatingRequestDto
 import ru.mfp.dto.PaymentDto
 import java.util.*
 
@@ -16,10 +16,10 @@ class PaymentClientServiceImpl(
     val properties: PaymentIntegrationProperties
 ) : PaymentClientService {
 
-    override fun createAccount(createdAccountDto: CreatedAccountDto): UUID =
-        paymentRestTemplate.postForObject(properties.api?.createAccount ?: "", createdAccountDto, UUID::javaClass)
+    override fun createAccount(accountCreatingRequestDto: AccountCreatingRequestDto): UUID =
+        paymentRestTemplate.postForObject(properties.api?.createAccount ?: "", accountCreatingRequestDto, UUID::javaClass)
 
 
-    override fun createPayment(createdPaymentDto: CreatedPaymentDto): PaymentDto =
-        paymentRestTemplate.postForObject(properties.api?.createPayment ?: "", createdPaymentDto, PaymentDto::javaClass)
+    override fun createPayment(paymentCreatingRequestDto: PaymentCreatingRequestDto): PaymentDto =
+        paymentRestTemplate.postForObject(properties.api?.createPayment ?: "", paymentCreatingRequestDto, PaymentDto::javaClass)
 }

@@ -1,5 +1,5 @@
 package ru.mfp.dto
 
-data class CreatedAccountDto(
+data class AccountCreatingRequestDto(
     val currency: String
 )

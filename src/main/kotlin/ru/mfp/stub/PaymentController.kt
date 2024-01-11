@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import ru.mfp.dto.CreatedPaymentDto
+import ru.mfp.dto.PaymentCreatingRequestDto
 import ru.mfp.dto.PaymentDto
 import java.math.BigDecimal
 import java.time.LocalDateTime
@@ -16,7 +16,7 @@ import java.util.*
 @RequestMapping("/stub")
 @ConditionalOnProperty(value = ["mfp.stub.payment.enabled"], havingValue = "true")
 class PaymentController {
-    private val payments = mutableListOf<CreatedPaymentDto>()
+    private val payments = mutableListOf<PaymentCreatingRequestDto>()
     private val data = mutableListOf<Account>()
     private val zero = BigDecimal.valueOf(0L)
 
@@ -39,47 +39,47 @@ class PaymentController {
     }
 
     @PostMapping("/payments")
-    fun createPayment(@RequestBody createdPaymentDto: CreatedPaymentDto): PaymentDto {
-        if (createdPaymentDto.createdAt.isBefore(LocalDateTime.now().minusMinutes(5))) {
-            return createResponse(createdPaymentDto, false, "Request expired")
+    fun createPayment(@RequestBody paymentCreatingRequestDto: PaymentCreatingRequestDto): PaymentDto {
+        if (paymentCreatingRequestDto.createdAt.isBefore(LocalDateTime.now().minusMinutes(5))) {
+            return createResponse(paymentCreatingRequestDto, false, "Request expired")
         }
         val amount: BigDecimal?
         try {
-            amount = BigDecimal(createdPaymentDto.amount)
+            amount = BigDecimal(paymentCreatingRequestDto.amount)
         } catch (e: IllegalArgumentException) {
-            return createResponse(createdPaymentDto, false, "Invalid amount format")
+            return createResponse(paymentCreatingRequestDto, false, "Invalid amount format")
         }
         if (amount <= zero) {
-            return createResponse(createdPaymentDto, false, "Amount must be positive number")
+            return createResponse(paymentCreatingRequestDto, false, "Amount must be positive number")
         }
         val currency: Currency
         try {
-            currency = Currency.getInstance(createdPaymentDto.currency)
+            currency = Currency.getInstance(paymentCreatingRequestDto.currency)
         } catch (e: IllegalArgumentException) {
-            return createResponse(createdPaymentDto, false, "Invalid payment currency")
+            return createResponse(paymentCreatingRequestDto, false, "Invalid payment currency")
         }
-        if (payments.stream().anyMatch { it.id == createdPaymentDto.id }) {
-            return createResponse(createdPaymentDto, false, "Payment was already processed")
+        if (payments.stream().anyMatch { it.id == paymentCreatingRequestDto.id }) {
+            return createResponse(paymentCreatingRequestDto, false, "Payment was already processed")
         }
-        if (data.stream().noneMatch { it.id == createdPaymentDto.accountFrom }
-            || data.stream().noneMatch { it.id == createdPaymentDto.accountTo }) {
-            return createResponse(createdPaymentDto, false, "Account doesn't exist")
+        if (data.stream().noneMatch { it.id == paymentCreatingRequestDto.accountFrom }
+            || data.stream().noneMatch { it.id == paymentCreatingRequestDto.accountTo }) {
+            return createResponse(paymentCreatingRequestDto, false, "Account doesn't exist")
         }
-        val accountFrom = data.stream().filter { it.id == createdPaymentDto.accountFrom }.findAny().orElseThrow()
-        val accountTo = data.stream().filter { it.id == createdPaymentDto.accountTo }.findAny().orElseThrow()
+        val accountFrom = data.stream().filter { it.id == paymentCreatingRequestDto.accountFrom }.findAny().orElseThrow()
+        val accountTo = data.stream().filter { it.id == paymentCreatingRequestDto.accountTo }.findAny().orElseThrow()
         if (accountFrom.currency != accountTo.currency) {
-            return createResponse(createdPaymentDto, false, "Accounts currency are not equal")
+            return createResponse(paymentCreatingRequestDto, false, "Accounts currency are not equal")
         }
         if (currency != accountFrom.currency) {
-            return createResponse(createdPaymentDto, false, "Currency are not supported for this account")
+            return createResponse(paymentCreatingRequestDto, false, "Currency are not supported for this account")
         }
         if (accountFrom.amount - amount < zero) {
-            return createResponse(createdPaymentDto, false, "AccountFrom doesn't have enough of money")
+            return createResponse(paymentCreatingRequestDto, false, "AccountFrom doesn't have enough of money")
         }
         accountFrom.amount -= amount
         accountTo.amount += amount
-        payments.add(createdPaymentDto)
-        return createResponse(createdPaymentDto, true, "Success")
+        payments.add(paymentCreatingRequestDto)
+        return createResponse(paymentCreatingRequestDto, true, "Success")
     }
 
     @PostMapping("/accounts")
@@ -90,11 +90,11 @@ class PaymentController {
     }
 
     private fun createResponse(
-        createdPaymentDto: CreatedPaymentDto,
+        paymentCreatingRequestDto: PaymentCreatingRequestDto,
         decision: Boolean,
         description: String
     ): PaymentDto {
-        return PaymentDto(createdPaymentDto.id, UUID.randomUUID(), decision, description, LocalDateTime.now())
+        return PaymentDto(paymentCreatingRequestDto.id, UUID.randomUUID(), decision, description, LocalDateTime.now())
     }
 
     private data class Account(

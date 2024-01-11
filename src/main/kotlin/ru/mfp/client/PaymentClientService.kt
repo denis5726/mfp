@@ -1,13 +1,13 @@
 package ru.mfp.client
 
-import ru.mfp.dto.CreatedAccountDto
-import ru.mfp.dto.CreatedPaymentDto
+import ru.mfp.dto.AccountCreatingRequestDto
+import ru.mfp.dto.PaymentCreatingRequestDto
 import ru.mfp.dto.PaymentDto
 import java.util.*
 
 interface PaymentClientService {
 
-    fun createAccount(createdAccountDto: CreatedAccountDto): UUID
+    fun createAccount(accountCreatingRequestDto: AccountCreatingRequestDto): UUID
 
-    fun createPayment(createdPaymentDto: CreatedPaymentDto): PaymentDto
+    fun createPayment(paymentCreatingRequestDto: PaymentCreatingRequestDto): PaymentDto
 }

@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional
 import ru.mfp.entity.EmailVerificationCode
 import ru.mfp.entity.UserStatus
 import ru.mfp.exception.EmailVerificationException
-import ru.mfp.exception.IllegalApiStateException
+import ru.mfp.exception.IllegalServerStateException
 import ru.mfp.model.JwtAuthentication
 import ru.mfp.repository.EmailVerificationCodeRepository
 import ru.mfp.repository.UserRepository
@@ -33,7 +33,7 @@ class EmailVerificationServiceImpl(
         log.info { "Generating email verification code for user with id=${authentication.id}" }
         val optionalUser = userRepository.findById(authentication.id)
         if (optionalUser.isEmpty || StringUtils.isBlank(optionalUser.get().email)) {
-            throw IllegalApiStateException("User data not found in database")
+            throw IllegalServerStateException("User data not found in database")
         }
         val user = optionalUser.get()
         if (user.status != UserStatus.NEW) {
@@ -53,7 +53,7 @@ class EmailVerificationServiceImpl(
     override fun verifyCode(code: String, authentication: JwtAuthentication) {
         log.info { "Verifying email code, user.id=${authentication.id}, code=${code}" }
         val user = userRepository.findById(authentication.id)
-            .orElseThrow { throw IllegalApiStateException("User data not found in database") }
+            .orElseThrow { throw IllegalServerStateException("User data not found in database") }
         if (user.status != UserStatus.NEW) {
             throw EmailVerificationException("You already verified your email by code!")
         }

@@ -8,5 +8,5 @@ interface CardRepository : JpaRepository<Card, UUID> {
 
     fun findByIdAndUserId(id: UUID, userId: UUID): Card?
 
-    fun findByUserId(userId: UUID): List<Card>
+    fun findByUserIdOrderByCreatedAtDesc(userId: UUID): List<Card>
 }

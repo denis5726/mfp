@@ -3,7 +3,7 @@ package ru.mfp.dto
 import java.time.LocalDateTime
 import java.util.*
 
-data class CreatedPaymentDto(
+data class PaymentCreatingRequestDto(
     val id: UUID,
     val accountFrom: UUID,
     val accountTo: UUID,

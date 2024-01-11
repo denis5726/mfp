@@ -3,10 +3,10 @@ package ru.mfp.service.impl
 import mu.KotlinLogging
 import org.springframework.stereotype.Service
 import ru.mfp.dto.CardDto
-import ru.mfp.dto.CreatedCardDto
+import ru.mfp.dto.CardCreatingRequestDto
 import ru.mfp.entity.Card
 import ru.mfp.exception.CardCreatingException
-import ru.mfp.exception.IllegalApiStateException
+import ru.mfp.exception.IllegalServerStateException
 import ru.mfp.exception.ResourceNotFoundException
 import ru.mfp.mapper.CardMapper
 import ru.mfp.model.JwtAuthentication
@@ -27,25 +27,25 @@ class CardServiceImpl(
     )
 
     override fun findCards(authentication: JwtAuthentication): List<CardDto> =
-        mapper.toDtoList(repository.findByUserId(authentication.id))
+        mapper.toDtoList(repository.findByUserIdOrderByCreatedAtDesc(authentication.id))
 
-    override fun addCard(createdCardDto: CreatedCardDto, authentication: JwtAuthentication): CardDto {
+    override fun addCard(cardCreatingRequestDto: CardCreatingRequestDto, authentication: JwtAuthentication): CardDto {
         val currency: Currency
         try {
-            currency = Currency.getInstance(createdCardDto.currency)
+            currency = Currency.getInstance(cardCreatingRequestDto.currency)
         } catch (e: IllegalArgumentException) {
-            throw CardCreatingException("Invalid currency code: ${createdCardDto.currency}")
+            throw CardCreatingException("Invalid currency code: ${cardCreatingRequestDto.currency}")
         }
-        val userCards = repository.findByUserId(authentication.id)
-        if (userCards.any { it.bankAccountId == createdCardDto.bankAccountId }) {
-            log.error { "Attempt to add another card with bankAccountId=${createdCardDto.bankAccountId}" }
-            throw CardCreatingException("Card with this bankAccountId (${createdCardDto.bankAccountId}) already exists")
+        val userCards = repository.findByUserIdOrderByCreatedAtDesc(authentication.id)
+        if (userCards.any { it.bankAccountId == cardCreatingRequestDto.bankAccountId }) {
+            log.error { "Attempt to add another card with bankAccountId=${cardCreatingRequestDto.bankAccountId}" }
+            throw CardCreatingException("Card with this bankAccountId (${cardCreatingRequestDto.bankAccountId}) already exists")
         }
         val user = userRepository.findById(authentication.id)
-            .orElseThrow { throw IllegalApiStateException("User data not found in database!") }
+            .orElseThrow { throw IllegalServerStateException("User data not found in database!") }
         val card = Card()
         card.user = user
-        card.bankAccountId = createdCardDto.bankAccountId
+        card.bankAccountId = cardCreatingRequestDto.bankAccountId
         card.currency = currency
         val savedCard = repository.save(card)
         log.info { "Card added for user: $savedCard" }

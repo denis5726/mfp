@@ -4,10 +4,10 @@ import mu.KotlinLogging
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import ru.mfp.dto.AccountDto
-import ru.mfp.dto.CreatedAccountDto
+import ru.mfp.dto.AccountCreatingRequestDto
 import ru.mfp.entity.Account
 import ru.mfp.exception.AccountCreatingException
-import ru.mfp.exception.IllegalApiStateException
+import ru.mfp.exception.IllegalServerStateException
 import ru.mfp.mapper.AccountMapper
 import ru.mfp.model.JwtAuthentication
 import ru.mfp.repository.AccountRepository
@@ -26,11 +26,11 @@ class AccountServiceImpl(
 ) : AccountService {
 
     override fun findAccounts(authentication: JwtAuthentication) =
-        accountMapper.toDtoList(accountRepository.findByUserId(authentication.id))
+        accountMapper.toDtoList(accountRepository.findByUserIdOrderByCreatedAtDesc(authentication.id))
 
     @Transactional
-    override fun addAccount(createdAccountDto: CreatedAccountDto, authentication: JwtAuthentication): AccountDto {
-        val userAccounts = accountRepository.findByUserId(authentication.id)
+    override fun addAccount(accountCreatingRequestDto: AccountCreatingRequestDto, authentication: JwtAuthentication): AccountDto {
+        val userAccounts = accountRepository.findByUserIdOrderByCreatedAtDesc(authentication.id)
         if (userAccounts.isNotEmpty()) {
             log.error { "Attempt to create another account by user (id=${authentication.id})" }
             throw AccountCreatingException("You already have an account!")
@@ -38,21 +38,21 @@ class AccountServiceImpl(
         val optionalUser = userRepository.findById(authentication.id)
         if (optionalUser.isEmpty) {
             log.error { "User doesn't exist, but token was created, id=${authentication.id}" }
-            throw IllegalApiStateException("User data not found in database")
+            throw IllegalServerStateException("User data not found in database")
         }
         val account = Account()
         account.user = optionalUser.get()
         account.amount = BigDecimal.valueOf(0L)
-        account.currency = convertCurrency(createdAccountDto)
+        account.currency = convertCurrency(accountCreatingRequestDto)
         return accountMapper.toDto(accountRepository.save(account))
     }
 
-    private fun convertCurrency(createdAccountDto: CreatedAccountDto): Currency {
+    private fun convertCurrency(accountCreatingRequestDto: AccountCreatingRequestDto): Currency {
         try {
-            return Currency.getInstance(createdAccountDto.currency)
+            return Currency.getInstance(accountCreatingRequestDto.currency)
         } catch (e: IllegalArgumentException) {
-            log.error { "Provided invalid currency code: ${createdAccountDto.currency}" }
-            throw AccountCreatingException("Invalid currency code: ${createdAccountDto.currency}")
+            log.error { "Provided invalid currency code: ${accountCreatingRequestDto.currency}" }
+            throw AccountCreatingException("Invalid currency code: ${accountCreatingRequestDto.currency}")
         }
     }
 }

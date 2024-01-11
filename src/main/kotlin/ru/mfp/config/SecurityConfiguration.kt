@@ -27,6 +27,7 @@ class SecurityConfiguration(
             .authorizeHttpRequests {
                 it
                     .requestMatchers(HttpMethod.POST, "/auth/signUp", "auth/signIn").permitAll()
+                    .requestMatchers("/stub/**").permitAll()
                     .anyRequest().authenticated()
             }
             .csrf {

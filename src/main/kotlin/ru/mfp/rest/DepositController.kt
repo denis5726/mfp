@@ -1,10 +1,7 @@
 package ru.mfp.rest
 
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
-import ru.mfp.dto.DepositRequestDto
+import org.springframework.web.bind.annotation.*
+import ru.mfp.dto.DepositCreatingRequestDto
 import ru.mfp.model.JwtAuthentication
 import ru.mfp.service.DepositService
 
@@ -15,9 +12,13 @@ class DepositController(
 ) {
 
     @GetMapping
-    fun findDeposits(authentication: JwtAuthentication) = service.findDeposits(authentication)
+    fun findDeposits(@RequestParam(required = false, defaultValue = "0") page: Int, authentication: JwtAuthentication) =
+        service.findDeposits(page, authentication)
 
     @PostMapping
-    fun addDeposit(depositRequestDto: DepositRequestDto, authentication: JwtAuthentication) =
-        service.addDeposit(depositRequestDto, authentication)
+    fun addDeposit(
+        @RequestBody depositCreatingRequestDto: DepositCreatingRequestDto,
+        authentication: JwtAuthentication
+    ) =
+        service.addDeposit(depositCreatingRequestDto, authentication)
 }
