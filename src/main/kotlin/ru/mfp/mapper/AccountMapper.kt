@@ -1,16 +1,13 @@
 package ru.mfp.mapper
 
 import org.mapstruct.Mapper
-import org.mapstruct.Mapping
 import ru.mfp.dto.AccountDto
 import ru.mfp.entity.Account
 
 @Mapper
 interface AccountMapper {
 
-    @Mapping(target = "userId", source = "user.id")
-    fun toDto(account: Account): AccountDto
+    fun toDto(account1: Account): AccountDto
 
-    @Mapping(target = "userId", source = "user.id")
-    fun toDtoList(account: List<Account>): List<AccountDto>
+    fun toDtoList(account1: List<Account>): List<AccountDto>
 }

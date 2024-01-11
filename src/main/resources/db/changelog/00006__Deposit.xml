@@ -31,9 +31,7 @@
             <column name="decision" type="boolean">
                 <constraints nullable="false"/>
             </column>
-            <column name="description" type="text">
-                <constraints nullable="false"/>
-            </column>
+            <column name="description" type="text"/>
             <column name="created_at" type="timestamptz">
                 <constraints nullable="false"/>
             </column>

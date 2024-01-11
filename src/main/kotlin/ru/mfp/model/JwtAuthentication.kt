@@ -4,7 +4,7 @@ import org.springframework.security.core.Authentication
 import org.springframework.security.core.GrantedAuthority
 import java.util.*
 
-data class JwtAuthentication(val id: UUID, val login: String) : Authentication {
+data class JwtAuthentication(val id: UUID, val email: String) : Authentication {
     override fun getAuthorities(): Collection<GrantedAuthority?> {
         return emptyList()
     }
@@ -14,11 +14,11 @@ data class JwtAuthentication(val id: UUID, val login: String) : Authentication {
     }
 
     override fun getDetails(): Any {
-        return login
+        return email
     }
 
     override fun getPrincipal(): Any {
-        return login
+        return email
     }
 
     override fun isAuthenticated(): Boolean {
@@ -30,6 +30,6 @@ data class JwtAuthentication(val id: UUID, val login: String) : Authentication {
     }
 
     override fun getName(): String {
-        return login
+        return email
     }
 }

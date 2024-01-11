@@ -23,10 +23,11 @@ private val log = KotlinLogging.logger { }
 
 @Service
 class AuthServiceImpl(
+    // TODO fix regex
     private val emailRegex: Regex = Regex("^(?=.{1,64}@)[A-Za-z0-9_-]+(\\\\.[A-Za-z0-9_-]+)*@" +
             "[^-][A-Za-z0-9-]+(\\\\.[A-Za-z0-9-]+)*(\\\\.[A-Za-z]{2,})\$"),
-    private val emptyLoginExceptionSupplier: () -> Nothing = {
-        throw AuthorizationException(HttpStatus.BAD_REQUEST, "Login must not be null")
+    private val emptyEmailExceptionSupplier: () -> Nothing = {
+        throw AuthorizationException(HttpStatus.BAD_REQUEST, "Email must not be null")
     },
     private val tokenProvider: TokenProvider,
     private val repository: UserRepository,
@@ -36,31 +37,26 @@ class AuthServiceImpl(
 
     @Transactional
     override fun signUp(signUpDto: SignUpDto): UserDto {
-        if (repository.existsByLogin(
-                signUpDto.login ?: emptyLoginExceptionSupplier.invoke()
-            )
-        ) {
-            log.error { "Attempt to create account with existent login: ${signUpDto.login}" }
-            throw RegistrationException(HttpStatus.BAD_REQUEST, "User with login ${signUpDto.login} already exists")
+        if (repository.existsByEmail(signUpDto.email)) {
+            log.error { "Attempt to create account with existent email: ${signUpDto.email}" }
+            throw RegistrationException(HttpStatus.BAD_REQUEST, "User with email ${signUpDto.email} already exists")
         }
-        if (!emailRegex.matches(signUpDto.login)) {
-            log.error { "Provided invalid email address: ${signUpDto.login}" }
+        if (!emailRegex.matches(signUpDto.email)) {
+            log.error { "Provided invalid email address: ${signUpDto.email}" }
             throw RegistrationException(HttpStatus.BAD_REQUEST, "Invalid email address!")
         }
-        log.info { "Saving new account with login: ${signUpDto.login}" }
+        log.info { "Saving new account with email: ${signUpDto.email}" }
         return mapper.toDto(repository.save(mapper.fromDto(signUpDto)))
     }
 
     override fun signIn(signInDto: SignInDto): TokenDto {
-        val account = repository.findByLogin(
-            signInDto.login ?: emptyLoginExceptionSupplier.invoke()
-        )
-            ?: throw AuthorizationException(HttpStatus.NOT_FOUND, "Account with login ${signInDto.login} is not found")
-        if (!passwordEncoder.matches(signInDto.passwordHash?.let { CharBuffer.wrap(it) }, account.passwordHash)) {
+        val account = repository.findByEmail(signInDto.email)
+            ?: throw AuthorizationException(HttpStatus.NOT_FOUND, "Account with email ${signInDto.email} is not found")
+        if (!passwordEncoder.matches(CharBuffer.wrap(signInDto.passwordHash), account.passwordHash)) {
             throw AuthorizationException(HttpStatus.FORBIDDEN, "Password verification failed")
         }
-        if (account.id != null && account.login != null) {
-            return TokenDto(tokenProvider.getToken(JwtAuthentication(account.id!!, account.login!!)))
+        if (account.id != null && account.email != null) {
+            return TokenDto(tokenProvider.getToken(JwtAuthentication(account.id!!, account.email!!)))
         }
         throw IllegalServerStateException("User data not found in database")
     }

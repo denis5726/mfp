@@ -27,11 +27,11 @@ class AccountServiceImpl(
 ) : AccountService {
 
     override fun findAccounts(authentication: JwtAuthentication) =
-        accountMapper.toDtoList(accountRepository.findByUser(authentication.id))
+        accountMapper.toDtoList(accountRepository.findByUserId(authentication.id))
 
     @Transactional
     override fun addAccount(createdAccountDto: CreatedAccountDto, authentication: JwtAuthentication): AccountDto {
-        val userAccounts = accountRepository.findByUser(authentication.id)
+        val userAccounts = accountRepository.findByUserId(authentication.id)
         if (userAccounts.isNotEmpty()) {
             log.error { "Attempt to create another account by user (id=${authentication.id})" }
             throw AccountCreatingException(HttpStatus.BAD_REQUEST, "You already have an account!")
@@ -42,17 +42,11 @@ class AccountServiceImpl(
             throw IllegalServerStateException("User data not found in database")
         }
 
-        return accountMapper.toDto(
-            accountRepository.save(
-                Account(
-                    null,
-                    optionalUser.get(),
-                    BigDecimal.valueOf(0L),
-                    convertCurrency(createdAccountDto),
-                    null
-                )
-            )
-        )
+        val account = Account()
+        account.user = optionalUser.get()
+        account.amount = BigDecimal.valueOf(0L)
+        account.currency = convertCurrency(createdAccountDto)
+        return accountMapper.toDto(accountRepository.save(account))
     }
 
     private fun convertCurrency(createdAccountDto: CreatedAccountDto): Currency? {

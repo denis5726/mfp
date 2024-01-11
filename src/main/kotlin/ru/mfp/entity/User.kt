@@ -1,42 +1,51 @@
 package ru.mfp.entity
 
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
-import jakarta.persistence.EnumType
-import jakarta.persistence.Enumerated
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.GenerationType
-import jakarta.persistence.Id
-import jakarta.persistence.Table
+import jakarta.persistence.*
 import org.hibernate.annotations.CreationTimestamp
+import org.hibernate.proxy.HibernateProxy
 import java.time.LocalDateTime
-import java.util.UUID
+import java.util.*
 
 @Entity
 @Table(name = "`user`")
-data class User(
+@Suppress("kotlin:S2097")
+open class User {
     @Id
-    @Column(name = "user_id")
     @GeneratedValue(strategy = GenerationType.UUID)
-    var id: UUID?,
-    var login: String?,
-    var passwordHash: String?,
+    @Column(name = "user_id", nullable = false)
+    open var id: UUID? = null
+
+    @Column(name = "email", nullable = false, unique = true)
+    open var email: String? = null
+
+    @Column(name = "password_hash", nullable = false)
+    open var passwordHash: String? = null
+
     @Enumerated(EnumType.STRING)
-    var status: UserStatus?,
+    @Column(name = "status", nullable = false, unique = true)
+    open var status: UserStatus? = null
+
     @CreationTimestamp
-    var registeredAt: LocalDateTime?
-) {
-    override fun equals(other: Any?): Boolean {
+    @Column(name = "created_at", nullable = false)
+    open var createdAt: LocalDateTime? = null
+
+    final override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other == null) return false
-        if (other !is User) return false
+        val oEffectiveClass =
+            if (other is HibernateProxy) other.hibernateLazyInitializer.persistentClass else other.javaClass
+        val thisEffectiveClass =
+            if (this is HibernateProxy) this.hibernateLazyInitializer.persistentClass else this.javaClass
+        if (thisEffectiveClass != oEffectiveClass) return false
+        other as User
 
-        return id == other.id
+        return id != null && id == other.id
     }
 
-    override fun hashCode(): Int = javaClass.hashCode()
+    final override fun hashCode(): Int = javaClass.hashCode()
 
+    @Override
     override fun toString(): String {
-        return this::class.simpleName + "(id=$id, login=$login, passwordHash=$passwordHash, registeredAt=$registeredAt)"
+        return this::class.simpleName + "(id = $id , email = $email , userStatus = $status )"
     }
 }

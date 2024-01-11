@@ -32,7 +32,7 @@ class EmailVerificationServiceImpl(
     override fun generateVerificationCode(authentication: JwtAuthentication) {
         log.info { "Generating email verification code for user with id=${authentication.id}" }
         val optionalUser = userRepository.findById(authentication.id)
-        if (optionalUser.isEmpty || StringUtils.isBlank(optionalUser.get().login)) {
+        if (optionalUser.isEmpty || StringUtils.isBlank(optionalUser.get().email)) {
             throw IllegalServerStateException("User data not found in database")
         }
         val user = optionalUser.get()
@@ -41,10 +41,12 @@ class EmailVerificationServiceImpl(
             throw EmailVerificationException("You already verified your email!")
         }
         val code = generateCode()
-        val emailVerificationCode = EmailVerificationCode(null, user, code, null)
+        val emailVerificationCode = EmailVerificationCode()
+        emailVerificationCode.value = code
+        emailVerificationCode.user = user
         val savedCode = repository.save(emailVerificationCode)
         log.info { "Generated code: ${savedCode.value}" }
-        emailService.sendSimpleTextMessage(user.login!!, messageSubject, messageText.format(savedCode.value))
+        emailService.sendSimpleTextMessage(user.email!!, messageSubject, messageText.format(savedCode.value))
         log.info { "Sent email message" }
     }
 

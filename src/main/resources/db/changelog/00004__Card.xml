@@ -15,7 +15,10 @@
             <column name="user_id" type="uuid">
                 <constraints nullable="false"/>
             </column>
-            <column name="account_id" type="uuid">
+            <column name="bank_account_id" type="uuid">
+                <constraints nullable="false" unique="true" uniqueConstraintName="card_bank_account_id_uq"/>
+            </column>
+            <column name="currency" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
             <column name="created_at" type="timestamptz">
@@ -34,7 +37,8 @@
         <insert tableName="card">
             <column name="card_id">891b8096-8452-4d6e-b98a-82d34dc18d81</column>
             <column name="user_id">15d30e1f-54bd-495b-a878-a60c0f8cd114</column>
-            <column name="account_id">22222222-3333-4444-5555-666666666666</column>
+            <column name="bank_account_id">22222222-3333-4444-5555-666666666666</column>
+            <column name="currency">RUB</column>
             <column name="created_at">2023-11-14T17:25:12.234133Z</column>
         </insert>
     </changeSet>

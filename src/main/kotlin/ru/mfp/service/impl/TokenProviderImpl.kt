@@ -55,7 +55,7 @@ class TokenProviderImpl(
     }
 
     override fun getToken(jwtAuthentication: JwtAuthentication): String {
-        val claims = Jwts.claims().setSubject(jwtAuthentication.login)
+        val claims = Jwts.claims().setSubject(jwtAuthentication.email)
         claims[idKey] = jwtAuthentication.id
         val now = LocalDateTime.now()
         val validity = now.plus(validityInSeconds, ChronoUnit.SECONDS)

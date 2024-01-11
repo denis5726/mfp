@@ -28,7 +28,7 @@ class DepositServiceImpl(
     private val cardRepository: CardRepository,
     private val accountRepository: AccountRepository
 ) : DepositService {
-    @Value("mfp.payment.main-bank-account-id")
+    @Value("\${mfp.payment.main-bank-account-id}")
     private var mainBankAccountId: UUID? = null
     private val mainBankAccountExceptionSupplier: () -> UUID = {
         log.error { "Main bank account id is not provided!" }
@@ -39,36 +39,20 @@ class DepositServiceImpl(
         mapper.toDtoList(repository.findByAccountUserId(authentication.id))
 
     override fun addDeposit(depositRequestDto: DepositRequestDto, authentication: JwtAuthentication): DepositDto {
-        val card = cardRepository.findById(
-            depositRequestDto.cardId ?: throw DepositCreatingException(
-                HttpStatus.BAD_REQUEST,
-                "Card id is not provided"
-            )
-        ).orElseGet {
+        val card = cardRepository.findById(depositRequestDto.cardId).orElseGet {
             throw DepositCreatingException(
                 HttpStatus.BAD_REQUEST,
                 "Card with id=${depositRequestDto.cardId} is not found"
             )
         }
-        val cardAccountId = card.accountId ?: throw DepositCreatingException(
+        val cardAccountId = card.bankAccountId ?: throw DepositCreatingException(
             HttpStatus.INTERNAL_SERVER_ERROR,
             "Card account id not found in database!"
         )
-        val account = accountRepository.findById(
-            depositRequestDto.accountId ?: throw DepositCreatingException(
-                HttpStatus.BAD_REQUEST,
-                "Account id is not provided"
-            )
-        ).orElseThrow {
+        val account = accountRepository.findById(depositRequestDto.accountId).orElseThrow {
             throw DepositCreatingException(
                 HttpStatus.BAD_REQUEST,
                 "Account with id=${depositRequestDto.accountId} is not found"
-            )
-        }
-        if (depositRequestDto.amount == null) {
-            throw DepositCreatingException(
-                HttpStatus.BAD_REQUEST,
-                "Amount is not provided"
             )
         }
         // TODO add card currency
