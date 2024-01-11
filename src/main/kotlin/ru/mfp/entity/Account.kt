@@ -16,7 +16,7 @@ open class Account {
     @Column(name = "account_id", nullable = false)
     open lateinit var id: UUID
 
-    @ManyToOne(optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     open lateinit var user: User
 

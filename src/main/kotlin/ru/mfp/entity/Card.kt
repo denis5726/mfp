@@ -15,7 +15,7 @@ open class Card {
     @Column(name = "card_id", nullable = false)
     open lateinit var id: UUID
 
-    @ManyToOne(optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     open lateinit var user: User
 

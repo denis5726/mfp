@@ -29,7 +29,7 @@ class DepositServiceImpl(
     private val cardRepository: CardRepository,
     private val accountRepository: AccountRepository
 ) : DepositService {
-    private val pageSize = 3
+    private val pageSize = 30
 
     @Value("\${mfp.payment.main-bank-account-id}")
     private var mainBankAccountId: UUID? = null
