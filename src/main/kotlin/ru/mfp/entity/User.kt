@@ -13,21 +13,21 @@ open class User {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "user_id", nullable = false)
-    open var id: UUID? = null
+    open lateinit var id: UUID
 
     @Column(name = "email", nullable = false, unique = true)
-    open var email: String? = null
+    open lateinit var email: String
 
     @Column(name = "password_hash", nullable = false)
-    open var passwordHash: String? = null
+    open lateinit var passwordHash: String
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, unique = true)
-    open var status: UserStatus? = null
+    open lateinit var status: UserStatus
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false)
-    open var createdAt: LocalDateTime? = null
+    open lateinit var createdAt: LocalDateTime
 
     final override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -39,7 +39,7 @@ open class User {
         if (thisEffectiveClass != oEffectiveClass) return false
         other as User
 
-        return id != null && id == other.id
+        return id == other.id
     }
 
     final override fun hashCode(): Int = javaClass.hashCode()

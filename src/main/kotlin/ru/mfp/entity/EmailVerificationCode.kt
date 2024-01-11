@@ -13,18 +13,18 @@ open class EmailVerificationCode {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "email_verification_code_id", nullable = false)
-    open var id: UUID? = null
+    open lateinit var id: UUID
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    open var user: User? = null
+    open lateinit var user: User
 
     @Column(name = "value", nullable = false, length = 10)
-    open var value: String? = null
+    open lateinit var value: String
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false)
-    open var createdAt: LocalDateTime? = null
+    open lateinit var createdAt: LocalDateTime
 
     final override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -36,7 +36,7 @@ open class EmailVerificationCode {
         if (thisEffectiveClass != oEffectiveClass) return false
         other as EmailVerificationCode
 
-        return id != null && id == other.id
+        return id == other.id
     }
 
     final override fun hashCode(): Int = javaClass.hashCode()

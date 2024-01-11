@@ -13,21 +13,21 @@ open class Card {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "card_id", nullable = false)
-    open var id: UUID? = null
+    open lateinit var id: UUID
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "user_id", nullable = false)
-    open var user: User? = null
+    open lateinit var user: User
 
     @Column(name = "bank_account_id", nullable = false, unique = true)
-    open var bankAccountId: UUID? = null
+    open lateinit var bankAccountId: UUID
 
     @Column(name = "currency", nullable = false)
-    open var currency: Currency? = null
+    open lateinit var currency: Currency
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false)
-    open var createdAt: LocalDateTime? = null
+    open lateinit var createdAt: LocalDateTime
 
     final override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -39,7 +39,7 @@ open class Card {
         if (thisEffectiveClass != oEffectiveClass) return false
         other as Card
 
-        return id != null && id == other.id
+        return id == other.id
     }
 
     final override fun hashCode(): Int = javaClass.hashCode()

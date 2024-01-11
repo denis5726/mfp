@@ -3,7 +3,7 @@ package ru.mfp.client
 import ru.mfp.dto.CreatedAccountDto
 import ru.mfp.dto.CreatedPaymentDto
 import ru.mfp.dto.PaymentDto
-import java.util.UUID
+import java.util.*
 
 interface PaymentClientService {
 

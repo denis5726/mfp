@@ -13,33 +13,33 @@ open class Deposit {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "deposit_id", nullable = false)
-    open var id: UUID? = null
+    open lateinit var id: UUID
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "account_id", nullable = false)
-    open var account: Account? = null
+    open lateinit var account: Account
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "card_id", nullable = false)
-    open var card: Card? = null
+    open lateinit var card: Card
 
     @Column(name = "payment_id", nullable = false, unique = true)
-    open var paymentId: UUID? = null
+    open lateinit var paymentId: UUID
 
     @Column(name = "operation_id", nullable = false, unique = true)
-    open var operationId: UUID? = null
+    open lateinit var operationId: UUID
 
     @Column(name = "amount", nullable = false, precision = 19, scale = 2)
-    open var amount: BigDecimal? = null
+    open lateinit var amount: BigDecimal
 
     @Column(name = "decision", nullable = false)
-    open var decision: Boolean? = false
+    open var decision: Boolean = false
 
     @Column(name = "description")
     open var description: String? = null
 
     @Column(name = "created_at", nullable = false)
-    open var createdAt: LocalDateTime? = null
+    open lateinit var createdAt: LocalDateTime
 
     final override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -51,7 +51,7 @@ open class Deposit {
         if (thisEffectiveClass != oEffectiveClass) return false
         other as Deposit
 
-        return id != null && id == other.id
+        return id == other.id
     }
 
     final override fun hashCode(): Int = javaClass.hashCode()

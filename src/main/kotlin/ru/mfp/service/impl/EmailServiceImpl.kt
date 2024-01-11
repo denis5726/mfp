@@ -8,10 +8,10 @@ import ru.mfp.service.EmailService
 
 @Service
 class EmailServiceImpl(
-    @Value("\${spring.mail.username}")
-    private var from: String? = null,
     private val emailSender: JavaMailSender
 ) : EmailService {
+    @Value("\${spring.mail.username}")
+    private var from: String? = null
 
     override fun sendSimpleTextMessage(to: String, subject: String, text: String) {
         val message = SimpleMailMessage()

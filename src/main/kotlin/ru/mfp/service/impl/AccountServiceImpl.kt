@@ -1,14 +1,13 @@
 package ru.mfp.service.impl
 
 import mu.KotlinLogging
-import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import ru.mfp.dto.AccountDto
 import ru.mfp.dto.CreatedAccountDto
 import ru.mfp.entity.Account
 import ru.mfp.exception.AccountCreatingException
-import ru.mfp.exception.IllegalServerStateException
+import ru.mfp.exception.IllegalApiStateException
 import ru.mfp.mapper.AccountMapper
 import ru.mfp.model.JwtAuthentication
 import ru.mfp.repository.AccountRepository
@@ -34,14 +33,13 @@ class AccountServiceImpl(
         val userAccounts = accountRepository.findByUserId(authentication.id)
         if (userAccounts.isNotEmpty()) {
             log.error { "Attempt to create another account by user (id=${authentication.id})" }
-            throw AccountCreatingException(HttpStatus.BAD_REQUEST, "You already have an account!")
+            throw AccountCreatingException("You already have an account!")
         }
         val optionalUser = userRepository.findById(authentication.id)
         if (optionalUser.isEmpty) {
             log.error { "User doesn't exist, but token was created, id=${authentication.id}" }
-            throw IllegalServerStateException("User data not found in database")
+            throw IllegalApiStateException("User data not found in database")
         }
-
         val account = Account()
         account.user = optionalUser.get()
         account.amount = BigDecimal.valueOf(0L)
@@ -49,15 +47,12 @@ class AccountServiceImpl(
         return accountMapper.toDto(accountRepository.save(account))
     }
 
-    private fun convertCurrency(createdAccountDto: CreatedAccountDto): Currency? {
+    private fun convertCurrency(createdAccountDto: CreatedAccountDto): Currency {
         try {
             return Currency.getInstance(createdAccountDto.currency)
         } catch (e: IllegalArgumentException) {
             log.error { "Provided invalid currency code: ${createdAccountDto.currency}" }
-            throw AccountCreatingException(
-                HttpStatus.BAD_REQUEST,
-                "Invalid currency code: ${createdAccountDto.currency}"
-            )
+            throw AccountCreatingException("Invalid currency code: ${createdAccountDto.currency}")
         }
     }
 }

@@ -1,8 +1,7 @@
 package ru.mfp.service
 
-import ru.mfp.model.JwtAuthentication
 import jakarta.servlet.http.HttpServletRequest
-import java.util.*
+import ru.mfp.model.JwtAuthentication
 
 interface TokenProvider {
 

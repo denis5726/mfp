@@ -17,5 +17,6 @@ class EmailVerificationController(
     fun generateVerificationCode(authentication: JwtAuthentication) = service.generateVerificationCode(authentication)
 
     @PostMapping("/verify")
-    fun verifyCode(@RequestBody code: String, authentication: JwtAuthentication) = service.verifyCode(code, authentication)
+    fun verifyCode(@RequestBody code: String, authentication: JwtAuthentication) =
+        service.verifyCode(code, authentication)
 }

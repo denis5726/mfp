@@ -4,7 +4,7 @@ import org.springframework.security.core.Authentication
 import org.springframework.security.core.GrantedAuthority
 import java.util.*
 
-data class JwtAuthentication(val id: UUID, val email: String) : Authentication {
+data class JwtAuthentication(val id: UUID) : Authentication {
     override fun getAuthorities(): Collection<GrantedAuthority?> {
         return emptyList()
     }
@@ -14,11 +14,11 @@ data class JwtAuthentication(val id: UUID, val email: String) : Authentication {
     }
 
     override fun getDetails(): Any {
-        return email
+        return id
     }
 
     override fun getPrincipal(): Any {
-        return email
+        return id
     }
 
     override fun isAuthenticated(): Boolean {
@@ -26,10 +26,12 @@ data class JwtAuthentication(val id: UUID, val email: String) : Authentication {
     }
 
     override fun setAuthenticated(isAuthenticated: Boolean) {
-        throw UnsupportedOperationException("JwtAuthentication is only for authenticated users")
+        if (!isAuthenticated) {
+            throw UnsupportedOperationException("JwtAuthentication is only for authenticated users")
+        }
     }
 
     override fun getName(): String {
-        return email
+        return id.toString()
     }
 }

@@ -1,13 +1,12 @@
 package ru.mfp.service.impl
 
 import mu.KotlinLogging
-import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import ru.mfp.dto.CardDto
 import ru.mfp.dto.CreatedCardDto
 import ru.mfp.entity.Card
 import ru.mfp.exception.CardCreatingException
-import ru.mfp.exception.IllegalServerStateException
+import ru.mfp.exception.IllegalApiStateException
 import ru.mfp.exception.ResourceNotFoundException
 import ru.mfp.mapper.CardMapper
 import ru.mfp.model.JwtAuthentication
@@ -35,17 +34,15 @@ class CardServiceImpl(
         try {
             currency = Currency.getInstance(createdCardDto.currency)
         } catch (e: IllegalArgumentException) {
-            throw CardCreatingException(HttpStatus.BAD_REQUEST, "Invalid currency code: ${createdCardDto.currency}")
+            throw CardCreatingException("Invalid currency code: ${createdCardDto.currency}")
         }
         val userCards = repository.findByUserId(authentication.id)
         if (userCards.any { it.bankAccountId == createdCardDto.bankAccountId }) {
             log.error { "Attempt to add another card with bankAccountId=${createdCardDto.bankAccountId}" }
-            throw CardCreatingException(
-                HttpStatus.BAD_REQUEST, "Card with this bankAccountId (${createdCardDto.bankAccountId}) already exists"
-            )
+            throw CardCreatingException("Card with this bankAccountId (${createdCardDto.bankAccountId}) already exists")
         }
         val user = userRepository.findById(authentication.id)
-            .orElseThrow { throw IllegalServerStateException("User data not found in database!") }
+            .orElseThrow { throw IllegalApiStateException("User data not found in database!") }
         val card = Card()
         card.user = user
         card.bankAccountId = createdCardDto.bankAccountId

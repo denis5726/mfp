@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component
 data class PaymentIntegrationProperties(
     var url: String?,
     var api: PaymentIntegrationApiProperties?
-){
+) {
 
     data class PaymentIntegrationApiProperties(
         var createAccount: String?,

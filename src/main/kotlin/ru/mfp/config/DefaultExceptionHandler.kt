@@ -1,13 +1,13 @@
 package ru.mfp.config
 
-import ru.mfp.dto.ErrorResponseDto
-import ru.mfp.exception.MfpServerException
 import jakarta.servlet.http.HttpServletRequest
 import mu.KotlinLogging
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
+import ru.mfp.dto.ErrorResponseDto
+import ru.mfp.exception.MfpApiException
 import java.time.LocalDateTime
 import java.util.*
 
@@ -16,9 +16,9 @@ private val log = KotlinLogging.logger { }
 @ControllerAdvice
 class DefaultExceptionHandler {
 
-    @ExceptionHandler(MfpServerException::class)
+    @ExceptionHandler(MfpApiException::class)
     fun handleApplicationException(
-        exception: MfpServerException,
+        exception: MfpApiException,
         request: HttpServletRequest
     ): ResponseEntity<ErrorResponseDto> = handleException(exception.status, request, exception)
 

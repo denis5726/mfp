@@ -2,13 +2,13 @@ package ru.mfp.service.impl
 
 import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import ru.mfp.client.PaymentClientService
 import ru.mfp.dto.CreatedPaymentDto
 import ru.mfp.dto.DepositDto
 import ru.mfp.dto.DepositRequestDto
 import ru.mfp.exception.DepositCreatingException
+import ru.mfp.exception.IllegalApiStateException
 import ru.mfp.mapper.DepositMapper
 import ru.mfp.model.JwtAuthentication
 import ru.mfp.repository.AccountRepository
@@ -32,7 +32,7 @@ class DepositServiceImpl(
     private var mainBankAccountId: UUID? = null
     private val mainBankAccountExceptionSupplier: () -> UUID = {
         log.error { "Main bank account id is not provided!" }
-        throw DepositCreatingException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error")
+        throw IllegalApiStateException("Internal server error")
     }
 
     override fun findDeposits(authentication: JwtAuthentication): List<DepositDto> =
@@ -40,36 +40,28 @@ class DepositServiceImpl(
 
     override fun addDeposit(depositRequestDto: DepositRequestDto, authentication: JwtAuthentication): DepositDto {
         val card = cardRepository.findById(depositRequestDto.cardId).orElseGet {
-            throw DepositCreatingException(
-                HttpStatus.BAD_REQUEST,
-                "Card with id=${depositRequestDto.cardId} is not found"
-            )
+            throw DepositCreatingException("Card with id=${depositRequestDto.cardId} is not found")
         }
-        val cardAccountId = card.bankAccountId ?: throw DepositCreatingException(
-            HttpStatus.INTERNAL_SERVER_ERROR,
-            "Card account id not found in database!"
-        )
         val account = accountRepository.findById(depositRequestDto.accountId).orElseThrow {
-            throw DepositCreatingException(
-                HttpStatus.BAD_REQUEST,
-                "Account with id=${depositRequestDto.accountId} is not found"
-            )
+            throw DepositCreatingException("Account with id=${depositRequestDto.accountId} is not found")
         }
-        // TODO add card currency
+        if (account.currency != card.currency) {
+            throw DepositCreatingException("Account and card currencies is not equal!")
+        }
         val createdPaymentDto = CreatedPaymentDto(
             UUID.randomUUID(),
-            cardAccountId,
+            card.bankAccountId,
             mainBankAccountId ?: mainBankAccountExceptionSupplier.invoke(),
             depositRequestDto.amount.toString(),
-            "RUB",
+            account.currency.currencyCode,
             LocalDateTime.now()
         )
         val paymentDto = paymentClientService.createPayment(createdPaymentDto)
         val deposit = mapper.fromDto(paymentDto)
         deposit.card = card
         deposit.account = account
-        if (paymentDto.decision && account.amount != null) {
-            account.amount = account.amount?.plus(depositRequestDto.amount)
+        if (paymentDto.decision) {
+            account.amount += depositRequestDto.amount
         }
         return mapper.toDto(repository.save(deposit))
     }

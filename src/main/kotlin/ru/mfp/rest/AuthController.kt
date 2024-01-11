@@ -1,12 +1,12 @@
 package ru.mfp.rest
 
-import ru.mfp.dto.SignInDto
-import ru.mfp.dto.SignUpDto
-import ru.mfp.service.AuthService
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import ru.mfp.dto.SignInDto
+import ru.mfp.dto.SignUpDto
+import ru.mfp.service.AuthService
 
 @RestController
 @RequestMapping("/auth")

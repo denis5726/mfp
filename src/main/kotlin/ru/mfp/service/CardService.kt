@@ -3,7 +3,7 @@ package ru.mfp.service
 import ru.mfp.dto.CardDto
 import ru.mfp.dto.CreatedCardDto
 import ru.mfp.model.JwtAuthentication
-import java.util.UUID
+import java.util.*
 
 interface CardService {
 

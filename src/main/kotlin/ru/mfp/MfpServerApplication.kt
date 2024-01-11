@@ -10,5 +10,5 @@ import org.springframework.transaction.annotation.EnableTransactionManagement
 class MfpServerApplication
 
 fun main(args: Array<String>) {
-	runApplication<MfpServerApplication>(*args)
+    runApplication<MfpServerApplication>(*args)
 }

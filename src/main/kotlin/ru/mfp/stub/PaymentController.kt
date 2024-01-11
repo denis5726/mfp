@@ -58,7 +58,7 @@ class PaymentController {
         } catch (e: IllegalArgumentException) {
             return createResponse(createdPaymentDto, false, "Invalid payment currency")
         }
-        if (payments.stream().anyMatch {it.id == createdPaymentDto.id}) {
+        if (payments.stream().anyMatch { it.id == createdPaymentDto.id }) {
             return createResponse(createdPaymentDto, false, "Payment was already processed")
         }
         if (data.stream().noneMatch { it.id == createdPaymentDto.accountFrom }
@@ -89,7 +89,11 @@ class PaymentController {
         return account.id
     }
 
-    private fun createResponse(createdPaymentDto: CreatedPaymentDto, decision: Boolean, description: String): PaymentDto {
+    private fun createResponse(
+        createdPaymentDto: CreatedPaymentDto,
+        decision: Boolean,
+        description: String
+    ): PaymentDto {
         return PaymentDto(createdPaymentDto.id, UUID.randomUUID(), decision, description, LocalDateTime.now())
     }
 
