@@ -50,3 +50,8 @@ spring:
           auth: true
           starttls:
             enable: true
+  kafka:
+    bootstrap-servers: localhost:29092
+    consumer:
+      group-id: MFP_GROUP_ID
+      auto-offset-reset: latest

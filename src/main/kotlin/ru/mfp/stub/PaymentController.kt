@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import ru.mfp.dto.PaymentCreatingRequestDto
-import ru.mfp.dto.PaymentDto
+import ru.mfp.payment.dto.PaymentCreatingRequestDto
+import ru.mfp.payment.dto.PaymentDto
 import java.math.BigDecimal
 import java.time.LocalDateTime
 import java.util.*

@@ -11,3 +11,22 @@ services:
       PG_DATA: /var/lib/postgresql/data/db-files
     volumes:
       - ./postgres-init:/docker-entrypoint-initdb.d
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    container_name: 'mfp-zookeeper'
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    container_name: 'mfp-kafka'
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_CREATE_TOPICS: "AUTH:1:1,ACCOUNT:1:1,CARD:1:1,DEPOSIT:1:1,EMAIL_VERIFICATION:1:1,WITHDRAW:1:1"
