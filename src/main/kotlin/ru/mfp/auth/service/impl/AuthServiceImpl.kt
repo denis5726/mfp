@@ -27,20 +27,12 @@ class AuthServiceImpl(
     private val mapper: UserMapper,
     private val passwordEncoder: PasswordEncoder
 ) : AuthService {
-    private val emailRegex: Regex = Regex(
-        "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@" +
-                "[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})\$"
-    )
 
     @Transactional
     override fun signUp(signUpDto: SignUpDto): UserDto {
         if (repository.existsByEmail(signUpDto.email)) {
             log.error { "Attempt to create account with existent email: ${signUpDto.email}" }
             throw RegistrationException("User with email ${signUpDto.email} already exists")
-        }
-        if (!emailRegex.matches(signUpDto.email)) {
-            log.error { "Provided invalid email address: ${signUpDto.email}" }
-            throw RegistrationException("Invalid email address!")
         }
         log.info { "Saving new account with email: ${signUpDto.email}" }
         return mapper.toDto(repository.save(mapper.fromDto(signUpDto)))

@@ -13,6 +13,9 @@ group = "ru.mfp"
 version = "0.0.1-SNAPSHOT"
 val mapStructVersion = "1.5.3.Final"
 val jjwtVersion = "0.9.1"
+val junitVersion = "5.9.2"
+val junitPlatformVersion = "1.9.2"
+val mockitoVersion = "5.2.0"
 
 java {
 	sourceCompatibility = JavaVersion.VERSION_17
@@ -44,6 +47,12 @@ dependencies {
 	implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
 	runtimeOnly("org.postgresql:postgresql")
 	kapt("org.mapstruct:mapstruct-processor:$mapStructVersion")
+	testImplementation("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
+	testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")
+	testImplementation("org.junit.jupiter:junit-jupiter-params:$junitVersion")
+	testImplementation("org.mockito:mockito-core:$mockitoVersion")
+	testImplementation("org.mockito.kotlin:mockito-kotlin:$mockitoVersion")
+	testImplementation("org.mockito:mockito-junit-jupiter:$mockitoVersion")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.springframework.security:spring-security-test")
 }

@@ -9,5 +9,4 @@ class MfpServerApplicationTests {
 	@Test
 	fun contextLoads() {
 	}
-
 }
