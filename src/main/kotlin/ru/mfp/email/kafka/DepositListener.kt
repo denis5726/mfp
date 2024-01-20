@@ -12,6 +12,6 @@ class DepositListener(
     private val handler: DepositEventHandler
 ) {
 
-    @KafkaListener(topics = ["DEPOSIT"], groupId = "EMAIL")
+    @KafkaListener(topics = ["DEPOSIT"], groupId = "EMAIL", autoStartup = "false")
     fun listenToDeposit(message: Message<String>) = processor.process(handler, message)
 }
