@@ -11,4 +11,6 @@ interface DepositRepository : JpaRepository<Deposit, UUID> {
 
     @EntityGraph(attributePaths = ["card", "account"])
     fun findByAccountUserIdOrderByCreatedAtDesc(id: UUID, pageable: Pageable): Slice<Deposit>
+
+    fun findByPaymentId(paymentId: UUID): Deposit?
 }

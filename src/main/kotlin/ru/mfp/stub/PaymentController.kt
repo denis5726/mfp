@@ -11,6 +11,7 @@ import ru.mfp.payment.dto.PaymentDto
 import java.math.BigDecimal
 import java.time.LocalDateTime
 import java.util.*
+import kotlin.random.Random
 
 @RestController
 @RequestMapping("/stub")
@@ -19,6 +20,7 @@ class PaymentController {
     private val payments = mutableListOf<PaymentCreatingRequestDto>()
     private val data = mutableListOf<Account>()
     private val zero = BigDecimal.valueOf(0L)
+    private val random = Random.Default
 
     @PostConstruct
     fun init() {
@@ -40,6 +42,9 @@ class PaymentController {
 
     @PostMapping("/payments")
     fun createPayment(@RequestBody paymentCreatingRequestDto: PaymentCreatingRequestDto): PaymentDto {
+        if (random.nextDouble() > 0.9) {
+            return createResponse(paymentCreatingRequestDto, false, "Internal server error")
+        }
         if (paymentCreatingRequestDto.createdAt.isBefore(LocalDateTime.now().minusMinutes(5))) {
             return createResponse(paymentCreatingRequestDto, false, "Request expired")
         }

@@ -10,6 +10,11 @@ mfp:
       create-account: /stub/accounts
       create-payment: /stub/payments
 
+  kafka:
+    deposit:
+      topic: DEPOSIT
+    email:
+      consumer-group: EMAIL
 jwt:
   header: Authorization
   expiration: 86400
@@ -20,7 +25,7 @@ spring:
   application.name: mfp-server
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/mfp
+    url: jdbc:postgresql://localhost:5433/mfp
     username: postgres
     password: postgres
   jpa:
@@ -33,7 +38,7 @@ spring:
         current_session_context_class: thread
   liquibase:
     enabled: true
-    url: jdbc:postgresql://localhost:5432/mfp
+    url: jdbc:postgresql://localhost:5433/mfp
     user: postgres
     password: postgres
     change-log: db/changeLog/db.changelog-master.xml

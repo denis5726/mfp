@@ -34,12 +34,6 @@ open class Deposit {
     @Column(name = "amount", nullable = false, precision = 19, scale = 2)
     open lateinit var amount: BigDecimal
 
-    @Column(name = "decision", nullable = false)
-    open var decision: Boolean = false
-
-    @Column(name = "description")
-    open var description: String? = null
-
     @Column(name = "created_at", nullable = false)
     open lateinit var createdAt: LocalDateTime
 
@@ -60,6 +54,6 @@ open class Deposit {
 
     @Override
     override fun toString(): String {
-        return this::class.simpleName + "(id = $id , paymentId = $paymentId , operationId = $operationId , amount = $amount , decision = $decision , description = $description )"
+        return this::class.simpleName + "(id = $id , paymentId = $paymentId , operationId = $operationId , amount = $amount  )"
     }
 }

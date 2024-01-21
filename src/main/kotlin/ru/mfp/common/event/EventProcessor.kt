@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component
 import ru.mfp.common.dto.CommonEventDto
 import ru.mfp.common.exception.EventParsingException
 
-private val log = KotlinLogging.logger {  }
+private val log = KotlinLogging.logger { }
 
 @Component
 class EventProcessor(
@@ -28,12 +28,11 @@ class EventProcessor(
         }
     }
 
-    private fun <T: CommonEventDto> parseEvent(payload: String, clazz: Class<T>): T {
+    private fun <T : CommonEventDto> parseEvent(payload: String, clazz: Class<T>) =
         try {
-            return objectMapper.readValue(payload, clazz)
+            objectMapper.readValue(payload, clazz)
         } catch (e: JsonProcessingException) {
             log.error { "Event parsing exception: ${e.message}" }
             throw EventParsingException("Exception while parsing event: ${e.message}")
         }
-    }
 }

@@ -28,10 +28,6 @@
             <column name="amount" type="decimal">
                 <constraints nullable="false"/>
             </column>
-            <column name="decision" type="boolean">
-                <constraints nullable="false"/>
-            </column>
-            <column name="description" type="text"/>
             <column name="created_at" type="timestamptz">
                 <constraints nullable="false"/>
             </column>
