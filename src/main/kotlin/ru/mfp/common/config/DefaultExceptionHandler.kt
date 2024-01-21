@@ -1,9 +1,13 @@
 package ru.mfp.common.config
 
 import jakarta.servlet.http.HttpServletRequest
+import jakarta.validation.ConstraintViolationException
 import mu.KotlinLogging
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.MethodArgumentNotValidException
+import org.springframework.web.bind.MissingPathVariableException
+import org.springframework.web.bind.MissingServletRequestParameterException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import ru.mfp.common.dto.ErrorResponseDto
@@ -17,16 +21,22 @@ private val log = KotlinLogging.logger { }
 class DefaultExceptionHandler {
 
     @ExceptionHandler(MfpApiException::class)
-    fun handleApplicationException(
-        exception: MfpApiException,
-        request: HttpServletRequest
-    ): ResponseEntity<ErrorResponseDto> = handleException(exception.status, request, exception)
+    fun handleApplicationException(exception: MfpApiException, request: HttpServletRequest) =
+        handleException(exception.status, request, exception)
 
     @ExceptionHandler(Throwable::class)
-    fun handleOtherException(
-        exception: Throwable,
-        request: HttpServletRequest
-    ): ResponseEntity<ErrorResponseDto> = handleException(HttpStatus.INTERNAL_SERVER_ERROR, request, exception)
+    fun handleOtherException(exception: Throwable, request: HttpServletRequest) =
+        handleException(HttpStatus.INTERNAL_SERVER_ERROR, request, exception)
+
+    @ExceptionHandler(
+        MethodArgumentNotValidException::class,
+        MissingServletRequestParameterException::class,
+        MissingPathVariableException::class,
+        ConstraintViolationException::class
+    )
+    fun handleFrameworksException(exception: Throwable, request: HttpServletRequest) =
+        handleException(HttpStatus.BAD_REQUEST, request, exception)
+
 
     fun handleException(
         status: HttpStatus,
