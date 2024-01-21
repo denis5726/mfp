@@ -13,5 +13,7 @@ data class DepositEventDto(
     val accountId: UUID,
     val cardId: UUID,
     val decision: Boolean,
-    val description: String?
+    val description: String?,
+    val amount: String,
+    val currency: String
 ) : CommonEventDto(eventId, eventTime)

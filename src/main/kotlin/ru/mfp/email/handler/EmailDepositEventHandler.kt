@@ -6,16 +6,14 @@ import ru.mfp.auth.repository.UserRepository
 import ru.mfp.common.event.EventHandler
 import ru.mfp.common.exception.IllegalServerStateException
 import ru.mfp.deposit.dto.DepositEventDto
-import ru.mfp.deposit.service.DepositService
 import ru.mfp.email.service.EmailService
 import java.time.format.DateTimeFormatter
 
 private val log = KotlinLogging.logger {  }
 
 @Component
-class DepositEventHandler(
+class EmailDepositEventHandler(
     private val emailService: EmailService,
-    private val depositService: DepositService,
     private val userRepository: UserRepository
 ) : EventHandler<DepositEventDto> {
     private val depositCreatedMessageSubject = "Ваш счёт был пополнен!"
@@ -38,15 +36,14 @@ class DepositEventHandler(
     }
 
     private fun sendSuccessDepositMessage(event: DepositEventDto) {
-        val deposit = getDeposit(event)
         emailService.sendSimpleTextMessage(
             getUserEmail(event),
             depositCreatedMessageSubject,
             depositCreatedMessageTemplate.format(
-                deposit.amount,
-                deposit.currency,
-                deposit.paymentId,
-                deposit.createdAt.format(dateTimeFormatter)
+                event.amount,
+                event.currency,
+                event.paymentId,
+                event.eventTime.format(dateTimeFormatter)
             )
         )
     }
@@ -66,6 +63,4 @@ class DepositEventHandler(
     private fun getUserEmail(event: DepositEventDto) = userRepository.findById(event.userId)
         .orElseThrow { throw IllegalServerStateException("User data not found in database") }
         .email
-
-    private fun getDeposit(event: DepositEventDto) = depositService.findDepositByPaymentId(event.paymentId)
 }

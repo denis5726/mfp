@@ -90,7 +90,8 @@ class DepositServiceImpl(
                 depositCreatingRequestDto,
                 authentication.id,
                 e.message,
-                paymentRequest.id
+                paymentRequest.id,
+                account.currency
             )
             throw DepositCreatingException("Payment service error")
         }
@@ -100,7 +101,8 @@ class DepositServiceImpl(
                 depositCreatingRequestDto,
                 authentication.id,
                 paymentDto.description,
-                paymentRequest.id
+                paymentRequest.id,
+                account.currency
             )
             throw DepositCreatingException("Payment declined: ${paymentDto.description}")
         }

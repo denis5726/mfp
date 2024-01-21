@@ -1,6 +1,10 @@
 package ru.mfp.account.service
 
-interface AccountHistoryService {
+import ru.mfp.account.entity.AccountChangeReason
+import java.math.BigDecimal
+import java.util.*
 
-    fun registerDeposit()
+fun interface AccountHistoryService {
+
+    fun registerChange(accountId: UUID, diff: BigDecimal, reason: AccountChangeReason)
 }

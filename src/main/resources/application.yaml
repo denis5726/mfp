@@ -11,6 +11,8 @@ mfp:
       create-payment: /stub/payments
 
   kafka:
+    account:
+      consumer-group: ACCOUNT
     deposit:
       topic: DEPOSIT
     email:

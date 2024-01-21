@@ -32,9 +32,10 @@ class DepositProducerImpl(
         request: DepositCreatingRequestDto,
         userId: UUID,
         message: String?,
-        paymentId: UUID
+        paymentId: UUID,
+        currency: Currency
     ) {
-        doSendInternal(createDepositErrorMessagePayload(request, userId, message, paymentId))
+        doSendInternal(createDepositErrorMessagePayload(request, userId, message, paymentId, currency))
     }
 
     private fun createDepositCreatedMessagePayload(deposit: Deposit) =
@@ -48,13 +49,16 @@ class DepositProducerImpl(
             deposit.card.id,
             true,
             "Deposit created",
+            deposit.amount.toString(),
+            deposit.account.currency.currencyCode
         )
 
     private fun createDepositErrorMessagePayload(
         request: DepositCreatingRequestDto,
         userId: UUID,
         message: String?,
-        paymentId: UUID
+        paymentId: UUID,
+        currency: Currency
     ) =
         DepositEventDto(
             UUID.randomUUID(),
@@ -65,7 +69,9 @@ class DepositProducerImpl(
             request.accountId,
             request.cardId,
             false,
-            message
+            message,
+            request.amount.toString(),
+            currency.currencyCode
         )
 
     private fun <T> doSendInternal(payload: T) {

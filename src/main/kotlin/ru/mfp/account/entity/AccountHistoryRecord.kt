@@ -20,8 +20,8 @@ open class AccountHistoryRecord {
     @JoinColumn(name = "account_id", nullable = false)
     open lateinit var account: Account
 
-    @Column(name = "amount", nullable = false, precision = 19, scale = 2)
-    open lateinit var amount: BigDecimal
+    @Column(name = "diff", nullable = false, precision = 19, scale = 2)
+    open lateinit var diff: BigDecimal
 
     @Enumerated(EnumType.STRING)
     @Column(name = "change_reason", nullable = false, length = 50)
@@ -48,6 +48,6 @@ open class AccountHistoryRecord {
 
     @Override
     override fun toString(): String {
-        return this::class.simpleName + "(id = $id , amount = $amount , changeReason = $changeReason )"
+        return this::class.simpleName + "(id = $id , diff = $diff , changeReason = $changeReason )"
     }
 }

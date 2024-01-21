@@ -8,5 +8,11 @@ interface DepositProducer {
 
     fun sendDepositCreatedEvent(deposit: Deposit)
 
-    fun sendDepositErrorEvent(request: DepositCreatingRequestDto, userId: UUID, message: String?, paymentId: UUID)
+    fun sendDepositErrorEvent(
+        request: DepositCreatingRequestDto,
+        userId: UUID,
+        message: String?,
+        paymentId: UUID,
+        currency: Currency
+    )
 }
