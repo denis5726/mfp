@@ -13,6 +13,8 @@ mfp:
   kafka:
     account:
       consumer-group: ACCOUNT
+    auth:
+      topic: AUTH
     deposit:
       topic: DEPOSIT
     email:

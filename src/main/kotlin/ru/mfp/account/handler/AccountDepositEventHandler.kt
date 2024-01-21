@@ -9,7 +9,7 @@ import java.math.BigDecimal
 
 @Component
 class AccountDepositEventHandler(
-    val accountHistoryService: AccountHistoryService
+    private val accountHistoryService: AccountHistoryService
 ) : EventHandler<DepositEventDto> {
 
     override fun getEventClass(): Class<DepositEventDto> = DepositEventDto::class.java

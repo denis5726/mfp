@@ -18,8 +18,8 @@ private val log = KotlinLogging.logger { }
 
 @Component
 class DepositProducerImpl(
-    val kafkaTemplate: KafkaTemplate<UUID, String>,
-    val objectMapper: ObjectMapper
+    private val kafkaTemplate: KafkaTemplate<UUID, String>,
+    private val objectMapper: ObjectMapper
 ) : DepositProducer {
     @Value("\${mfp.kafka.deposit.topic}")
     private var topic: String? = null

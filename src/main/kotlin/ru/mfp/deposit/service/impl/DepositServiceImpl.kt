@@ -4,6 +4,7 @@ import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import ru.mfp.account.entity.Account
 import ru.mfp.account.repository.AccountRepository
 import ru.mfp.card.entity.Card
@@ -54,6 +55,7 @@ class DepositServiceImpl(
             ).content
         )
 
+    @Transactional
     override fun addDeposit(
         depositCreatingRequestDto: DepositCreatingRequestDto,
         authentication: JwtAuthentication

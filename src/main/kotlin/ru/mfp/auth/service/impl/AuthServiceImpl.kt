@@ -12,6 +12,7 @@ import ru.mfp.auth.dto.SignInDto
 import ru.mfp.auth.dto.SignUpDto
 import ru.mfp.auth.exception.AuthorizationException
 import ru.mfp.auth.exception.RegistrationException
+import ru.mfp.auth.kafka.producer.AuthProducer
 import ru.mfp.auth.service.AuthService
 import ru.mfp.auth.service.TokenProvider
 import ru.mfp.common.exception.ResourceNotFoundException
@@ -25,7 +26,8 @@ class AuthServiceImpl(
     private val tokenProvider: TokenProvider,
     private val repository: UserRepository,
     private val mapper: UserMapper,
-    private val passwordEncoder: PasswordEncoder
+    private val passwordEncoder: PasswordEncoder,
+    private val authProducer: AuthProducer
 ) : AuthService {
 
     @Transactional
@@ -35,7 +37,9 @@ class AuthServiceImpl(
             throw RegistrationException("User with email ${signUpDto.email} already exists")
         }
         log.info { "Saving new account with email: ${signUpDto.email}" }
-        return mapper.toDto(repository.save(mapper.fromDto(signUpDto)))
+        val saved = repository.save(mapper.fromDto(signUpDto))
+        authProducer.sendRegistrationEvent(saved)
+        return mapper.toDto(saved)
     }
 
     override fun signIn(signInDto: SignInDto): TokenDto {

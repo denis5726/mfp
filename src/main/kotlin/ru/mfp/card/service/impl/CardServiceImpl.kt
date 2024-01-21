@@ -2,6 +2,7 @@ package ru.mfp.card.service.impl
 
 import mu.KotlinLogging
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import ru.mfp.auth.repository.UserRepository
 import ru.mfp.card.dto.CardCreatingRequestDto
 import ru.mfp.card.dto.CardDto
@@ -19,7 +20,7 @@ private val log = KotlinLogging.logger { }
 
 @Service
 class CardServiceImpl(
-    val repository: CardRepository, val mapper: CardMapper, val userRepository: UserRepository
+    private val repository: CardRepository, val mapper: CardMapper, val userRepository: UserRepository
 ) : CardService {
 
     override fun findCardById(id: UUID, authentication: JwtAuthentication): CardDto = mapper.toDto(
@@ -29,6 +30,7 @@ class CardServiceImpl(
     override fun findCards(authentication: JwtAuthentication): List<CardDto> =
         mapper.toDtoList(repository.findByUserIdOrderByCreatedAtDesc(authentication.id))
 
+    @Transactional
     override fun addCard(cardCreatingRequestDto: CardCreatingRequestDto, authentication: JwtAuthentication): CardDto {
         val currency = try {
             Currency.getInstance(cardCreatingRequestDto.currency)
