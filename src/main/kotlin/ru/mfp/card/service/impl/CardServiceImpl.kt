@@ -2,17 +2,17 @@ package ru.mfp.card.service.impl
 
 import mu.KotlinLogging
 import org.springframework.stereotype.Service
-import ru.mfp.card.dto.CardDto
+import ru.mfp.auth.repository.UserRepository
 import ru.mfp.card.dto.CardCreatingRequestDto
+import ru.mfp.card.dto.CardDto
 import ru.mfp.card.entity.Card
 import ru.mfp.card.exception.CardCreatingException
+import ru.mfp.card.mapper.CardMapper
+import ru.mfp.card.repository.CardRepository
+import ru.mfp.card.service.CardService
 import ru.mfp.common.exception.IllegalServerStateException
 import ru.mfp.common.exception.ResourceNotFoundException
-import ru.mfp.card.mapper.CardMapper
 import ru.mfp.common.model.JwtAuthentication
-import ru.mfp.card.repository.CardRepository
-import ru.mfp.auth.repository.UserRepository
-import ru.mfp.card.service.CardService
 import java.util.*
 
 private val log = KotlinLogging.logger { }
@@ -30,9 +30,8 @@ class CardServiceImpl(
         mapper.toDtoList(repository.findByUserIdOrderByCreatedAtDesc(authentication.id))
 
     override fun addCard(cardCreatingRequestDto: CardCreatingRequestDto, authentication: JwtAuthentication): CardDto {
-        val currency: Currency
-        try {
-            currency = Currency.getInstance(cardCreatingRequestDto.currency)
+        val currency = try {
+            Currency.getInstance(cardCreatingRequestDto.currency)
         } catch (e: IllegalArgumentException) {
             throw CardCreatingException("Invalid currency code: ${cardCreatingRequestDto.currency}")
         }

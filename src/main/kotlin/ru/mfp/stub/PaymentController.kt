@@ -43,18 +43,16 @@ class PaymentController {
         if (paymentCreatingRequestDto.createdAt.isBefore(LocalDateTime.now().minusMinutes(5))) {
             return createResponse(paymentCreatingRequestDto, false, "Request expired")
         }
-        val amount: BigDecimal?
-        try {
-            amount = BigDecimal(paymentCreatingRequestDto.amount)
+        val amount = try {
+            BigDecimal(paymentCreatingRequestDto.amount)
         } catch (e: IllegalArgumentException) {
             return createResponse(paymentCreatingRequestDto, false, "Invalid amount format")
         }
         if (amount <= zero) {
             return createResponse(paymentCreatingRequestDto, false, "Amount must be positive number")
         }
-        val currency: Currency
-        try {
-            currency = Currency.getInstance(paymentCreatingRequestDto.currency)
+        val currency = try {
+            Currency.getInstance(paymentCreatingRequestDto.currency)
         } catch (e: IllegalArgumentException) {
             return createResponse(paymentCreatingRequestDto, false, "Invalid payment currency")
         }
@@ -65,7 +63,8 @@ class PaymentController {
             || data.stream().noneMatch { it.id == paymentCreatingRequestDto.accountTo }) {
             return createResponse(paymentCreatingRequestDto, false, "Account doesn't exist")
         }
-        val accountFrom = data.stream().filter { it.id == paymentCreatingRequestDto.accountFrom }.findAny().orElseThrow()
+        val accountFrom =
+            data.stream().filter { it.id == paymentCreatingRequestDto.accountFrom }.findAny().orElseThrow()
         val accountTo = data.stream().filter { it.id == paymentCreatingRequestDto.accountTo }.findAny().orElseThrow()
         if (accountFrom.currency != accountTo.currency) {
             return createResponse(paymentCreatingRequestDto, false, "Accounts currency are not equal")

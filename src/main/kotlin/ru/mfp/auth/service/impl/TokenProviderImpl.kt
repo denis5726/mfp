@@ -33,8 +33,8 @@ class TokenProviderImpl : TokenProvider {
 
     @PostConstruct
     fun init() {
-        if (secretKey != null) {
-            secretKey = Base64.getEncoder().encodeToString(secretKey!!.toByteArray(StandardCharsets.UTF_8))
+        secretKey = if (secretKey != null) {
+            Base64.getEncoder().encodeToString(secretKey!!.toByteArray(StandardCharsets.UTF_8))
         } else {
             throw JwtInitializationException("Secret key for jwt token is not found")
         }
