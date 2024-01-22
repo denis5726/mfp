@@ -2,10 +2,9 @@ package ru.mfp.stub
 
 import jakarta.annotation.PostConstruct
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.*
+import ru.mfp.payment.dto.CurrencyExchangeRatesDto
 import ru.mfp.payment.dto.PaymentCreatingRequestDto
 import ru.mfp.payment.dto.PaymentDto
 import java.math.BigDecimal
@@ -19,6 +18,7 @@ import kotlin.random.Random
 class PaymentController {
     private val payments = mutableListOf<PaymentCreatingRequestDto>()
     private val data = mutableListOf<Account>()
+    private val currencyExchangeRates = mutableMapOf<Currency, Map<Currency, BigDecimal>>()
     private val zero = BigDecimal.valueOf(0L)
     private val random = Random.Default
 
@@ -37,6 +37,19 @@ class PaymentController {
                 BigDecimal.valueOf(1000L),
                 Currency.getInstance("RUB")
             )
+        )
+        data.add(
+            Account(
+                UUID.fromString("33333333-4444-5555-6666-777777777777"),
+                BigDecimal.valueOf(0L),
+                Currency.getInstance("USD")
+            )
+        )
+        currencyExchangeRates[Currency.getInstance("RUB")] = mapOf(
+            Pair(Currency.getInstance("USD"), BigDecimal("0.011367"))
+        )
+        currencyExchangeRates[Currency.getInstance("USD")] = mapOf(
+            Pair(Currency.getInstance("RUB"), BigDecimal("87.97"))
         )
     }
 
@@ -68,20 +81,33 @@ class PaymentController {
             || data.stream().noneMatch { it.id == paymentCreatingRequestDto.accountTo }) {
             return createResponse(paymentCreatingRequestDto, false, "Account doesn't exist")
         }
-        val accountFrom =
-            data.stream().filter { it.id == paymentCreatingRequestDto.accountFrom }.findAny().orElseThrow()
-        val accountTo = data.stream().filter { it.id == paymentCreatingRequestDto.accountTo }.findAny().orElseThrow()
-        if (accountFrom.currency != accountTo.currency) {
-            return createResponse(paymentCreatingRequestDto, false, "Accounts currency are not equal")
+        val accountFrom = data.first { it.id == paymentCreatingRequestDto.accountFrom }
+        val accountTo = data.first { it.id == paymentCreatingRequestDto.accountTo }
+        val amountFrom = if (accountFrom.currency == currency) {
+            amount
+        } else {
+            currencyExchangeRates[currency]?.get(accountFrom.currency)?.multiply(amount)
+                ?: return createResponse(
+                    paymentCreatingRequestDto,
+                    false,
+                    "Exchanging not available for this currencies (from $currency to ${accountFrom.currency}"
+                )
         }
-        if (currency != accountFrom.currency) {
-            return createResponse(paymentCreatingRequestDto, false, "Currency are not supported for this account")
+        val amountTo = if (accountTo.currency == currency) {
+            amount
+        } else {
+            currencyExchangeRates[currency]?.get(accountTo.currency)?.multiply(amount)
+                ?: return createResponse(
+                    paymentCreatingRequestDto,
+                    false,
+                    "Exchanging not available for this currencies (from $currency to ${accountTo.currency}"
+                )
         }
-        if (accountFrom.amount - amount < zero) {
+        if (accountFrom.amount - amountFrom < zero) {
             return createResponse(paymentCreatingRequestDto, false, "AccountFrom doesn't have enough of money")
         }
-        accountFrom.amount -= amount
-        accountTo.amount += amount
+        accountFrom.amount -= amountFrom
+        accountTo.amount += amountTo
         payments.add(paymentCreatingRequestDto)
         return createResponse(paymentCreatingRequestDto, true, "Success")
     }
@@ -91,6 +117,25 @@ class PaymentController {
         val account = Account(UUID.randomUUID(), BigDecimal.valueOf(0L), Currency.getInstance("RUB"))
         data.add(account)
         return account.id
+    }
+
+    @GetMapping("/currencyExchangeRates/{currencyString}")
+    fun findCurrencyExchangeRates(@PathVariable currencyString: String): ResponseEntity<CurrencyExchangeRatesDto> {
+        val currency = try {
+            Currency.getInstance(currencyString)
+        } catch (e: IllegalArgumentException) {
+            return ResponseEntity.badRequest().build()
+        }
+        return ResponseEntity.ok(
+            CurrencyExchangeRatesDto(
+                currencyString,
+                currencyExchangeRates.entries
+                    .filter { it.key == currency }
+                    .map { it.value }
+                    .flatMap { it.entries }
+                    .map { CurrencyExchangeRatesDto.ExchangeRate(it.key.currencyCode, it.value.toPlainString()) }
+            )
+        )
     }
 
     private fun createResponse(

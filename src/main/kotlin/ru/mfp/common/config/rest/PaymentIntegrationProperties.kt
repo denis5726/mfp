@@ -12,6 +12,7 @@ data class PaymentIntegrationProperties(
 
     data class PaymentIntegrationApiProperties(
         var createAccount: String?,
-        var createPayment: String?
+        var createPayment: String?,
+        var findCurrencyExchangeRates: String?
     )
 }

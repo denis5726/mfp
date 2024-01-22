@@ -9,6 +9,7 @@ mfp:
     api:
       create-account: /stub/accounts
       create-payment: /stub/payments
+      find-currency-exchange-rates: /stub/currencyExchangeRates
 
   kafka:
     account:

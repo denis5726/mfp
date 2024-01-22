@@ -26,8 +26,15 @@
             <column name="user_id">15d30e1f-54bd-495b-a878-a60c0f8cd114</column>
             <column name="email">dengordeev1@gmail.com</column>
             <column name="password_hash">$2y$12$DoFu56yCIJFFD0p/e.Wb6O20qNGCSajOlOXn7zjvgJ5qDzleNqlWG</column>
-            <column name="status">NORMAL</column>
+            <column name="status">SOLVENCY_VERIFIED</column>
             <column name="created_at">2023-11-14T17:22:21.047412Z</column>
+        </insert>
+        <insert tableName="user">
+            <column name="user_id">e9654e74-903b-49d5-9eae-773637a474a4</column>
+            <column name="email">dengordeev228@gmail.com</column>
+            <column name="password_hash">$2y$12$DoFu56yCIJFFD0p/e.Wb6O20qNGCSajOlOXn7zjvgJ5qDzleNqlWG</column>
+            <column name="status">NEW</column>
+            <column name="created_at">2023-11-17T13:12:01.054313Z</column>
         </insert>
     </changeSet>
 </databaseChangeLog>

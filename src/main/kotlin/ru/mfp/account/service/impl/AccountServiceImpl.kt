@@ -12,6 +12,7 @@ import ru.mfp.account.mapper.AccountMapper
 import ru.mfp.account.repository.AccountRepository
 import ru.mfp.account.service.AccountHistoryService
 import ru.mfp.account.service.AccountService
+import ru.mfp.auth.entity.UserStatus
 import ru.mfp.auth.repository.UserRepository
 import ru.mfp.common.exception.IllegalServerStateException
 import ru.mfp.common.model.JwtAuthentication
@@ -37,19 +38,21 @@ class AccountServiceImpl(
         accountCreatingRequestDto: AccountCreatingRequestDto,
         authentication: JwtAuthentication
     ): AccountDto {
+        val user = userRepository.findById(authentication.id)
+            .orElseThrow { throw IllegalServerStateException("User data not found in database") }
+        if (user.status == UserStatus.NEW) {
+            log.error { "Attempt to create and account without email verification (userId=${user.id})" }
+            throw AccountCreatingException("You need to verify email for this action")
+        }
         val userAccounts = accountRepository.findByUserIdOrderByCreatedAtDesc(authentication.id)
         // Пока что у пользователя может быть только один счёт
         if (userAccounts.isNotEmpty()) {
             log.error { "Attempt to create another account by user (id=${authentication.id})" }
             throw AccountCreatingException("You already have an account!")
         }
-        val optionalUser = userRepository.findById(authentication.id)
-        if (optionalUser.isEmpty) {
-            log.error { "User doesn't exist, but token was created, id=${authentication.id}" }
-            throw IllegalServerStateException("User data not found in database")
-        }
         val account = Account()
-        account.user = optionalUser.get()
+        account.user = user
+        account.amount = BigDecimal.valueOf(0L)
         // Когда будет несколько счетов, подарок начислять надо только на первый
         account.amount = creationGift
         account.currency = convertCurrency(accountCreatingRequestDto)

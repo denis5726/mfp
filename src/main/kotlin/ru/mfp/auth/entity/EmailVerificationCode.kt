@@ -1,9 +1,8 @@
-package ru.mfp.email.entity
+package ru.mfp.auth.entity
 
 import jakarta.persistence.*
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.proxy.HibernateProxy
-import ru.mfp.auth.entity.User
 import java.time.LocalDateTime
 import java.util.*
 

@@ -21,7 +21,7 @@ import ru.mfp.deposit.kafka.producer.DepositProducer
 import ru.mfp.deposit.mapper.DepositMapper
 import ru.mfp.deposit.repository.DepositRepository
 import ru.mfp.deposit.service.DepositService
-import ru.mfp.payment.PaymentClientService
+import ru.mfp.payment.PaymentApiClientService
 import ru.mfp.payment.dto.PaymentCreatingRequestDto
 import ru.mfp.payment.dto.PaymentDto
 import java.time.LocalDateTime
@@ -33,7 +33,7 @@ private val log = KotlinLogging.logger { }
 class DepositServiceImpl(
     private val repository: DepositRepository,
     private val mapper: DepositMapper,
-    private val paymentClientService: PaymentClientService,
+    private val paymentApiClientService: PaymentApiClientService,
     private val cardRepository: CardRepository,
     private val accountRepository: AccountRepository,
     private val depositProducer: DepositProducer
@@ -85,7 +85,7 @@ class DepositServiceImpl(
     ): PaymentDto {
         val paymentRequest = buildPaymentRequest(card, depositCreatingRequestDto, account)
         val paymentDto: PaymentDto = try {
-            paymentClientService.createPayment(paymentRequest)
+            paymentApiClientService.createPayment(paymentRequest)
         } catch (e: PaymentApiException) {
             log.error { "Exception during payment service request: ${e.message}" }
             depositProducer.sendDepositErrorEvent(
