@@ -1,7 +1,7 @@
-package ru.mfp.email.repository
+package ru.mfp.auth.repository
 
 import org.springframework.data.jpa.repository.JpaRepository
-import ru.mfp.email.entity.EmailVerificationCode
+import ru.mfp.auth.entity.EmailVerificationCode
 import ru.mfp.auth.entity.User
 import java.util.*
 
