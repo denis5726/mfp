@@ -47,7 +47,7 @@ class AccountServiceImplTest {
         USER.id = UUID.randomUUID()
         USER.email = "email"
         USER.passwordHash = "passwordHash"
-        USER.status = UserStatus.NORMAL
+        USER.status = UserStatus.SOLVENCY_VERIFIED
         USER.createdAt = LocalDateTime.now()
     }
 

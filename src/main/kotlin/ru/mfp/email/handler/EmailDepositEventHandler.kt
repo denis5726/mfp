@@ -2,9 +2,8 @@ package ru.mfp.email.handler
 
 import mu.KotlinLogging
 import org.springframework.stereotype.Component
-import ru.mfp.auth.repository.UserRepository
+import ru.mfp.auth.service.UserService
 import ru.mfp.common.event.EventHandler
-import ru.mfp.common.exception.IllegalServerStateException
 import ru.mfp.deposit.dto.DepositEventDto
 import ru.mfp.email.service.EmailService
 import java.time.format.DateTimeFormatter
@@ -14,7 +13,7 @@ private val log = KotlinLogging.logger {  }
 @Component
 class EmailDepositEventHandler(
     private val emailService: EmailService,
-    private val userRepository: UserRepository
+    private val userService: UserService
 ) : EventHandler<DepositEventDto> {
     private val depositCreatedMessageSubject = "Ваш счёт был пополнен!"
     private val depositCreatedMessageTemplate =
@@ -60,7 +59,5 @@ class EmailDepositEventHandler(
         )
     }
 
-    private fun getUserEmail(event: DepositEventDto) = userRepository.findById(event.userId)
-        .orElseThrow { throw IllegalServerStateException("User data not found in database") }
-        .email
+    private fun getUserEmail(event: DepositEventDto) = userService.findById(event.userId).email
 }
