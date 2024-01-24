@@ -8,4 +8,6 @@ import java.util.*
 interface EmailVerificationCodeRepository : JpaRepository<EmailVerificationCode, UUID> {
 
     fun findFirstByUserOrderByCreatedAtDesc(user: User): EmailVerificationCode?
+
+    fun findByUser(user: User)
 }

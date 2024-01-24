@@ -20,6 +20,7 @@ import ru.mfp.payment.dto.PaymentCreatingRequestDto
 import java.math.BigDecimal
 import java.time.LocalDateTime
 import java.util.*
+import kotlin.random.Random
 
 private val log = KotlinLogging.logger { }
 
@@ -36,6 +37,8 @@ class VerificationServiceImpl(
     private var mainBankAccountId: UUID? = null
     private val verificationAmount = BigDecimal.valueOf(1)
     private val verificationCurrency = Currency.getInstance("RUB")
+    private val codeLength: Int = 6
+    private val random: Random = Random.Default
 
     override fun generateEmailCode(authentication: JwtAuthentication) {
         log.info { "Generating email verification code for user with id=${authentication.id}" }
@@ -46,7 +49,8 @@ class VerificationServiceImpl(
             log.error { "Attempt to verify by verified user, id=${authentication.id}" }
             throw VerificationException("You already verified your email!")
         }
-        val code = emailVerificationService.sendVerificationCode(user.email)
+        val code = generateCode()
+        emailVerificationService.sendVerificationCode(user.email, code)
         val emailVerificationCode = EmailVerificationCode()
         emailVerificationCode.value = code
         emailVerificationCode.user = user
@@ -72,6 +76,12 @@ class VerificationServiceImpl(
 
     override fun verifySolvency(cardId: UUID, authentication: JwtAuthentication) {
         log.info { "Verifying solvency (cardId=$cardId, userId=${authentication.id}" }
+        val user = userRepository.findById(authentication.id)
+            .orElseThrow { throw IllegalServerStateException("User not found") }
+        if (user.status != UserStatus.EMAIL_VERIFIED) {
+            log.error { "Attempt to verify solvency with status: ${user.status}, userId=${user.id}" }
+            throw VerificationException("Invalid status for this action")
+        }
         val card = cardService.findCardById(cardId, authentication)
         val paymentRequestDto = PaymentCreatingRequestDto(
             UUID.randomUUID(),
@@ -95,7 +105,6 @@ class VerificationServiceImpl(
             throw VerificationException("Payment service has rejected a payment: ${paymentDto.description}")
         }
         log.info { "Solvency verifying payment success: $paymentDto" }
-        val user = userRepository.findById(authentication.id).orElseThrow { throw IllegalServerStateException("User not found") }
         user.status = UserStatus.SOLVENCY_VERIFIED
         userRepository.saveAndFlush(user)
         val refundPaymentRequestDto = PaymentCreatingRequestDto(
@@ -115,5 +124,13 @@ class VerificationServiceImpl(
         } catch (e: PaymentApiException) {
             log.error { "Exception during refund verification payment: ${e.message}" }
         }
+    }
+
+    private fun generateCode(): String {
+        val stringBuilder: StringBuilder = StringBuilder(codeLength)
+        for (i in 0 until codeLength) {
+            stringBuilder.append(random.nextInt(10))
+        }
+        return stringBuilder.toString()
     }
 }
