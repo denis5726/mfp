@@ -1,0 +1,47 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+    <changeSet author="denis5726" id="init">
+        <preConditions>
+            <tableExists tableName="account"/>
+            <tableExists tableName="card"/>
+        </preConditions>
+
+        <createTable tableName="withdraw">
+            <column name="withdraw_id" type="uuid">
+                <constraints primaryKey="true" primaryKeyName="withdraw_pkey"/>
+            </column>
+            <column name="account_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="card_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="payment_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="operation_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="amount" type="decimal">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="timestamptz">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="withdraw"
+                                 baseColumnNames="account_id"
+                                 constraintName="withdraw_account_id_fkey"
+                                 referencedTableName="account"
+                                 referencedColumnNames="account_id"/>
+        <addForeignKeyConstraint baseTableName="withdraw"
+                                 baseColumnNames="card_id"
+                                 constraintName="card_account_id_fkey"
+                                 referencedTableName="card"
+                                 referencedColumnNames="card_id"/>
+    </changeSet>
+</databaseChangeLog>

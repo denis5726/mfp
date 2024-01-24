@@ -3,7 +3,7 @@ package ru.mfp.email.service.impl
 import mu.KotlinLogging
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import ru.mfp.auth.entity.EmailVerificationCode
+import ru.mfp.user.entity.EmailVerificationCode
 import ru.mfp.email.service.EmailService
 import ru.mfp.email.service.EmailVerificationService
 

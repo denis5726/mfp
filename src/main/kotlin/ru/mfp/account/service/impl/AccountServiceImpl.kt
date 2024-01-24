@@ -12,8 +12,8 @@ import ru.mfp.account.mapper.AccountMapper
 import ru.mfp.account.repository.AccountRepository
 import ru.mfp.account.service.AccountHistoryService
 import ru.mfp.account.service.AccountService
-import ru.mfp.auth.entity.UserStatus
-import ru.mfp.auth.repository.UserRepository
+import ru.mfp.user.entity.UserStatus
+import ru.mfp.user.repository.UserRepository
 import ru.mfp.common.exception.IllegalServerStateException
 import ru.mfp.common.model.JwtAuthentication
 import java.math.BigDecimal
@@ -40,9 +40,9 @@ class AccountServiceImpl(
     ): AccountDto {
         val user = userRepository.findById(authentication.id)
             .orElseThrow { throw IllegalServerStateException("User data not found in database") }
-        if (user.status == UserStatus.NEW) {
-            log.error { "Attempt to create and account without email verification (userId=${user.id})" }
-            throw AccountCreatingException("You need to verify email for this action")
+        if (user.status == UserStatus.NEW || user.status == UserStatus.SOLVENCY_VERIFIED) {
+            log.error { "Attempt to create and account without verification (userId=${user.id})" }
+            throw AccountCreatingException("You need to verify email and solvency for this action")
         }
         val userAccounts = accountRepository.findByUserIdOrderByCreatedAtDesc(authentication.id)
         // Пока что у пользователя может быть только один счёт
@@ -52,7 +52,7 @@ class AccountServiceImpl(
         }
         val account = Account()
         account.user = user
-        account.amount = BigDecimal.valueOf(0L)
+        account.amount = BigDecimal.valueOf(1000L)
         // Когда будет несколько счетов, подарок начислять надо только на первый
         account.amount = creationGift
         account.currency = convertCurrency(accountCreatingRequestDto)

@@ -19,9 +19,9 @@ import ru.mfp.account.entity.Account
 import ru.mfp.account.exception.AccountCreatingException
 import ru.mfp.account.mapper.AccountMapper
 import ru.mfp.account.repository.AccountRepository
-import ru.mfp.auth.entity.User
-import ru.mfp.auth.entity.UserStatus
-import ru.mfp.auth.repository.UserRepository
+import ru.mfp.user.entity.User
+import ru.mfp.user.entity.UserStatus
+import ru.mfp.user.repository.UserRepository
 import ru.mfp.common.exception.IllegalServerStateException
 import ru.mfp.common.model.JwtAuthentication
 import java.math.BigDecimal

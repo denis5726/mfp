@@ -2,9 +2,9 @@ package ru.mfp.email.handler
 
 import mu.KotlinLogging
 import org.springframework.stereotype.Component
-import ru.mfp.auth.service.UserService
+import ru.mfp.user.service.UserService
 import ru.mfp.common.event.EventHandler
-import ru.mfp.deposit.dto.DepositEventDto
+import ru.mfp.payment.dto.DepositEventDto
 import ru.mfp.email.service.EmailService
 import java.time.format.DateTimeFormatter
 

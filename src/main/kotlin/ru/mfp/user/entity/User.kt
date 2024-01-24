@@ -1,31 +1,29 @@
-package ru.mfp.account.entity
+package ru.mfp.user.entity
 
 import jakarta.persistence.*
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.proxy.HibernateProxy
-import ru.mfp.user.entity.User
-import java.math.BigDecimal
 import java.time.LocalDateTime
 import java.util.*
 
 @Entity
-@Table(name = "account")
+@Table(name = "`user`")
 @Suppress("kotlin:S2097")
-open class Account {
+open class User {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "account_id", nullable = false)
+    @Column(name = "user_id", nullable = false)
     open lateinit var id: UUID
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_id", nullable = false)
-    open lateinit var user: User
+    @Column(name = "email", nullable = false, unique = true)
+    open lateinit var email: String
 
-    @Column(name = "amount", nullable = false, precision = 19, scale = 2)
-    open lateinit var amount: BigDecimal
+    @Column(name = "password_hash", nullable = false)
+    open lateinit var passwordHash: String
 
-    @Column(name = "currency", nullable = false)
-    open lateinit var currency: Currency
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false, unique = true)
+    open lateinit var status: UserStatus
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false)
@@ -39,7 +37,7 @@ open class Account {
         val thisEffectiveClass =
             if (this is HibernateProxy) this.hibernateLazyInitializer.persistentClass else this.javaClass
         if (thisEffectiveClass != oEffectiveClass) return false
-        other as Account
+        other as User
 
         return id == other.id
     }
@@ -48,6 +46,6 @@ open class Account {
 
     @Override
     override fun toString(): String {
-        return this::class.simpleName + "(id = $id , amount = $amount , currency = $currency )"
+        return this::class.simpleName + "(id = $id , email = $email , userStatus = $status )"
     }
 }

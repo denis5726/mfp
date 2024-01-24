@@ -1,33 +1,39 @@
-package ru.mfp.account.entity
+package ru.mfp.payment.entity
 
 import jakarta.persistence.*
-import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.proxy.HibernateProxy
-import ru.mfp.user.entity.User
+import ru.mfp.account.entity.Account
+import ru.mfp.account.entity.Card
 import java.math.BigDecimal
 import java.time.LocalDateTime
 import java.util.*
 
 @Entity
-@Table(name = "account")
+@Table(name = "deposit")
 @Suppress("kotlin:S2097")
-open class Account {
+open class Deposit {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "account_id", nullable = false)
+    @Column(name = "deposit_id", nullable = false)
     open lateinit var id: UUID
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_id", nullable = false)
-    open lateinit var user: User
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "account_id", nullable = false)
+    open lateinit var account: Account
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "card_id", nullable = false)
+    open lateinit var card: Card
+
+    @Column(name = "payment_id", nullable = false, unique = true)
+    open lateinit var paymentId: UUID
+
+    @Column(name = "operation_id", nullable = false, unique = true)
+    open lateinit var operationId: UUID
 
     @Column(name = "amount", nullable = false, precision = 19, scale = 2)
     open lateinit var amount: BigDecimal
 
-    @Column(name = "currency", nullable = false)
-    open lateinit var currency: Currency
-
-    @CreationTimestamp
     @Column(name = "created_at", nullable = false)
     open lateinit var createdAt: LocalDateTime
 
@@ -39,7 +45,7 @@ open class Account {
         val thisEffectiveClass =
             if (this is HibernateProxy) this.hibernateLazyInitializer.persistentClass else this.javaClass
         if (thisEffectiveClass != oEffectiveClass) return false
-        other as Account
+        other as Deposit
 
         return id == other.id
     }
@@ -48,6 +54,6 @@ open class Account {
 
     @Override
     override fun toString(): String {
-        return this::class.simpleName + "(id = $id , amount = $amount , currency = $currency )"
+        return this::class.simpleName + "(id = $id , paymentId = $paymentId , operationId = $operationId , amount = $amount  )"
     }
 }

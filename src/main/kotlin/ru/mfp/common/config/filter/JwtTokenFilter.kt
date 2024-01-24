@@ -6,7 +6,7 @@ import jakarta.servlet.http.HttpServletResponse
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
-import ru.mfp.auth.service.TokenProvider
+import ru.mfp.user.service.TokenProvider
 
 @Component
 class JwtTokenFilter(private val tokenProvider: TokenProvider) : OncePerRequestFilter() {

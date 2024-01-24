@@ -4,7 +4,7 @@ import org.springframework.stereotype.Component
 import ru.mfp.account.entity.AccountChangeReason
 import ru.mfp.account.service.AccountHistoryService
 import ru.mfp.common.event.EventHandler
-import ru.mfp.deposit.dto.DepositEventDto
+import ru.mfp.payment.dto.DepositEventDto
 import java.math.BigDecimal
 
 @Component
