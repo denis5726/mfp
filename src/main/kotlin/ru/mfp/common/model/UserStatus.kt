@@ -1,8 +1,8 @@
-package ru.mfp.user.entity
+package ru.mfp.common.model
 
 enum class UserStatus {
     NEW,
     EMAIL_VERIFIED,
     SOLVENCY_VERIFIED,
-    DELETED
+    BANNED
 }

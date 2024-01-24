@@ -4,7 +4,13 @@ import org.springframework.security.core.Authentication
 import org.springframework.security.core.GrantedAuthority
 import java.util.*
 
-data class JwtAuthentication(val id: UUID) : Authentication {
+data class JwtAuthentication(
+    val id: UUID,
+    val mode: Mode,
+    val role: String,
+    val status: UserStatus
+) : Authentication {
+
     override fun getAuthorities(): Collection<GrantedAuthority?> {
         return emptyList()
     }
@@ -33,5 +39,9 @@ data class JwtAuthentication(val id: UUID) : Authentication {
 
     override fun getName(): String {
         return id.toString()
+    }
+
+    enum class Mode {
+        USER, SERVICE
     }
 }

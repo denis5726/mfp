@@ -1,4 +1,4 @@
-package ru.mfp.user.service.impl
+package ru.mfp.common.config
 
 import io.jsonwebtoken.JwtException
 import io.jsonwebtoken.Jwts
@@ -6,11 +6,8 @@ import io.jsonwebtoken.SignatureAlgorithm
 import jakarta.annotation.PostConstruct
 import jakarta.servlet.http.HttpServletRequest
 import mu.KotlinLogging
-import org.springframework.beans.factory.annotation.Value
-import org.springframework.stereotype.Component
-import ru.mfp.user.service.TokenProvider
-import ru.mfp.common.exception.JwtInitializationException
 import ru.mfp.common.model.JwtAuthentication
+import ru.mfp.common.model.UserStatus
 import java.nio.charset.StandardCharsets
 import java.time.Instant
 import java.time.LocalDateTime
@@ -20,29 +17,22 @@ import java.util.*
 
 private val log = KotlinLogging.logger {}
 
-@Component
-class TokenProviderImpl : TokenProvider {
-    @Value("\${jwt.header}")
-    private var tokenHeader: String? = null
-
-    @Value("\${jwt.expiration}")
-    private var validityInSeconds: Long = 0
-
-    @Value("\${jwt.secret}")
-    private var secretKey: String? = null
+class TokenProvider(
+    private val properties: JwtProperties
+) {
+    private lateinit var encodedSecretKey: String
+    private val modeKey = "mode"
+    private val roleKey = "role"
+    private val statusKey = "status"
 
     @PostConstruct
     fun init() {
-        secretKey = if (secretKey != null) {
-            Base64.getEncoder().encodeToString(secretKey!!.toByteArray(StandardCharsets.UTF_8))
-        } else {
-            throw JwtInitializationException("Secret key for jwt token is not found")
-        }
+        encodedSecretKey = Base64.getEncoder().encodeToString(properties.secret?.toByteArray(StandardCharsets.UTF_8))
     }
 
-    override fun isValidToken(token: String): Boolean {
+    fun isValidToken(token: String): Boolean {
         return try {
-            val claimsJws = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token)
+            val claimsJws = Jwts.parser().setSigningKey(encodedSecretKey).parseClaimsJws(token)
             !claimsJws.body.expiration.before(convertToDate(LocalDateTime.now()))
         } catch (e: JwtException) {
             log.error { "Jwt exception during checking validation of token: $token" }
@@ -53,28 +43,36 @@ class TokenProviderImpl : TokenProvider {
         }
     }
 
-    override fun getToken(jwtAuthentication: JwtAuthentication): String {
+    fun getToken(jwtAuthentication: JwtAuthentication): String {
         val claims = Jwts.claims().setSubject(jwtAuthentication.id.toString())
+        claims[modeKey] = jwtAuthentication.mode
+        claims[roleKey] = jwtAuthentication.role
+        claims[statusKey] = jwtAuthentication.status
         val now = LocalDateTime.now()
-        val validity = now.plus(validityInSeconds, ChronoUnit.SECONDS)
+        val validity = now.plus(properties.expiration ?: Long.MAX_VALUE, ChronoUnit.SECONDS)
         return Jwts.builder()
             .addClaims(claims)
             .setIssuedAt(convertToDate(now))
             .setExpiration(convertToDate(validity))
-            .signWith(SignatureAlgorithm.HS256, secretKey)
+            .signWith(SignatureAlgorithm.HS256, encodedSecretKey)
             .compact()
     }
 
-    override fun getAuthentication(token: String): JwtAuthentication {
+    fun getAuthentication(token: String): JwtAuthentication {
         val tokenBody = Jwts.parser()
-            .setSigningKey(secretKey)
+            .setSigningKey(encodedSecretKey)
             .parseClaimsJws(token)
             .body
-        return JwtAuthentication(UUID.fromString(tokenBody.subject))
+        return JwtAuthentication(
+            UUID.fromString(tokenBody.subject),
+            tokenBody[modeKey, JwtAuthentication.Mode::class.java],
+            tokenBody[roleKey, String::class.java],
+            tokenBody[statusKey, UserStatus::class.java]
+        )
     }
 
-    override fun resolveToken(request: HttpServletRequest): String? {
-        return request.getHeader(tokenHeader)
+    fun resolveToken(request: HttpServletRequest): String? {
+        return request.getHeader(properties.header)
     }
 
     private fun convertToDate(localDateTime: LocalDateTime): Date {

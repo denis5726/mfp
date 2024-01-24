@@ -1,4 +1,9 @@
 mfp:
+  jwt:
+    header: Authorization
+    expiration: 86400
+    secret: secret
+
   stub:
     payment:
       enabled: true
@@ -20,10 +25,7 @@ mfp:
       topic: DEPOSIT
     email:
       consumer-group: EMAIL
-jwt:
-  header: Authorization
-  expiration: 86400
-  secret: secret
+
 server:
   port: 8080
 spring:

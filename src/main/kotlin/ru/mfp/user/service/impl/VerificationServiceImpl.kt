@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import ru.mfp.user.entity.EmailVerificationCode
-import ru.mfp.user.entity.UserStatus
+import ru.mfp.common.model.UserStatus
 import ru.mfp.user.exception.VerificationException
 import ru.mfp.user.repository.EmailVerificationCodeRepository
 import ru.mfp.user.repository.UserRepository

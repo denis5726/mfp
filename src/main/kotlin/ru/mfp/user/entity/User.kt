@@ -3,6 +3,7 @@ package ru.mfp.user.entity
 import jakarta.persistence.*
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.proxy.HibernateProxy
+import ru.mfp.common.model.UserStatus
 import java.time.LocalDateTime
 import java.util.*
 

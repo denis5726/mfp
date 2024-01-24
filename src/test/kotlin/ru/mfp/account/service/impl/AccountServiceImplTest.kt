@@ -19,11 +19,12 @@ import ru.mfp.account.entity.Account
 import ru.mfp.account.exception.AccountCreatingException
 import ru.mfp.account.mapper.AccountMapper
 import ru.mfp.account.repository.AccountRepository
-import ru.mfp.user.entity.User
-import ru.mfp.user.entity.UserStatus
-import ru.mfp.user.repository.UserRepository
+import ru.mfp.account.service.AccountHistoryService
 import ru.mfp.common.exception.IllegalServerStateException
 import ru.mfp.common.model.JwtAuthentication
+import ru.mfp.common.model.UserStatus
+import ru.mfp.user.entity.User
+import ru.mfp.user.repository.UserRepository
 import java.math.BigDecimal
 import java.time.LocalDateTime
 import java.util.*
@@ -33,8 +34,10 @@ class AccountServiceImplTest {
     private val accountRepository: AccountRepository = mock()
     private val accountMapper: AccountMapper = mock()
     private val userRepository: UserRepository = mock()
+    private val accountHistoryService: AccountHistoryService = mock()
     private val accountArgumentCaptor = argumentCaptor<Account>()
-    private val service: AccountServiceImpl = AccountServiceImpl(accountRepository, accountMapper, userRepository)
+    private val service: AccountServiceImpl =
+        AccountServiceImpl(accountRepository, accountMapper, userRepository, accountHistoryService)
 
     @BeforeEach
     fun setUp() {
@@ -125,7 +128,8 @@ class AccountServiceImplTest {
     companion object {
         private val ACCOUNT = Account()
         private val ACCOUNT_DTO = AccountDto(UUID.randomUUID(), "100.00", "RUB")
-        private val AUTHENTICATION = JwtAuthentication(UUID.randomUUID())
+        private val AUTHENTICATION =
+            JwtAuthentication(UUID.randomUUID(), JwtAuthentication.Mode.USER, "USER", UserStatus.SOLVENCY_VERIFIED)
         private val ACCOUNT_CREATING_REQUEST = AccountCreatingRequestDto("USD")
         private val USER = User()
     }
