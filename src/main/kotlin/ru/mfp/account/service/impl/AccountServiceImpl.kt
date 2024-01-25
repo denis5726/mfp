@@ -12,7 +12,7 @@ import ru.mfp.account.mapper.AccountMapper
 import ru.mfp.account.repository.AccountRepository
 import ru.mfp.account.service.AccountHistoryService
 import ru.mfp.account.service.AccountService
-import ru.mfp.common.model.UserStatus
+import ru.mfp.common.model.UserRole
 import ru.mfp.user.repository.UserRepository
 import ru.mfp.common.exception.IllegalServerStateException
 import ru.mfp.common.model.JwtAuthentication
@@ -40,7 +40,7 @@ class AccountServiceImpl(
     ): AccountDto {
         val user = userRepository.findById(authentication.id)
             .orElseThrow { throw IllegalServerStateException("User data not found in database") }
-        if (authentication.status == UserStatus.NEW || authentication.status == UserStatus.SOLVENCY_VERIFIED) {
+        if (authentication.role == UserRole.NEW || authentication.role == UserRole.SOLVENCY_VERIFIED) {
             log.error { "Attempt to create and account without verification (userId=${user.id})" }
             throw AccountCreatingException("You need to verify email and solvency for this action")
         }

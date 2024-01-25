@@ -1,6 +1,6 @@
 package ru.mfp.common.model
 
-enum class UserStatus {
+enum class UserRole {
     NEW,
     EMAIL_VERIFIED,
     SOLVENCY_VERIFIED,

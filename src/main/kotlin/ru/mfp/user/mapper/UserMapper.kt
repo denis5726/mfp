@@ -11,6 +11,6 @@ interface UserMapper {
 
     fun toDto(user: User): UserDto
 
-    @Mapping(target = "status", constant = "NEW")
+    @Mapping(target = "role", constant = "NEW")
     fun fromDto(signUpDto: SignUpDto): User
 }

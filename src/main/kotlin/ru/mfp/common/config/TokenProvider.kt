@@ -7,7 +7,7 @@ import jakarta.annotation.PostConstruct
 import jakarta.servlet.http.HttpServletRequest
 import mu.KotlinLogging
 import ru.mfp.common.model.JwtAuthentication
-import ru.mfp.common.model.UserStatus
+import ru.mfp.common.model.UserRole
 import java.nio.charset.StandardCharsets
 import java.time.Instant
 import java.time.LocalDateTime
@@ -23,7 +23,6 @@ class TokenProvider(
     private lateinit var encodedSecretKey: String
     private val modeKey = "mode"
     private val roleKey = "role"
-    private val statusKey = "status"
 
     @PostConstruct
     fun init() {
@@ -47,7 +46,6 @@ class TokenProvider(
         val claims = Jwts.claims().setSubject(jwtAuthentication.id.toString())
         claims[modeKey] = jwtAuthentication.mode
         claims[roleKey] = jwtAuthentication.role
-        claims[statusKey] = jwtAuthentication.status
         val now = LocalDateTime.now()
         val validity = now.plus(properties.expiration ?: Long.MAX_VALUE, ChronoUnit.SECONDS)
         return Jwts.builder()
@@ -66,8 +64,7 @@ class TokenProvider(
         return JwtAuthentication(
             UUID.fromString(tokenBody.subject),
             tokenBody[modeKey, JwtAuthentication.Mode::class.java],
-            tokenBody[roleKey, String::class.java],
-            tokenBody[statusKey, UserStatus::class.java]
+            tokenBody[roleKey, UserRole::class.java]
         )
     }
 

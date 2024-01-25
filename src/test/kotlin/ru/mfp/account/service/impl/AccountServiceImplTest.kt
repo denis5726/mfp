@@ -22,7 +22,7 @@ import ru.mfp.account.repository.AccountRepository
 import ru.mfp.account.service.AccountHistoryService
 import ru.mfp.common.exception.IllegalServerStateException
 import ru.mfp.common.model.JwtAuthentication
-import ru.mfp.common.model.UserStatus
+import ru.mfp.common.model.UserRole
 import ru.mfp.user.entity.User
 import ru.mfp.user.repository.UserRepository
 import java.math.BigDecimal
@@ -50,7 +50,7 @@ class AccountServiceImplTest {
         USER.id = UUID.randomUUID()
         USER.email = "email"
         USER.passwordHash = "passwordHash"
-        USER.status = UserStatus.SOLVENCY_VERIFIED
+        USER.role = UserRole.SOLVENCY_VERIFIED
         USER.createdAt = LocalDateTime.now()
     }
 
@@ -129,7 +129,7 @@ class AccountServiceImplTest {
         private val ACCOUNT = Account()
         private val ACCOUNT_DTO = AccountDto(UUID.randomUUID(), "100.00", "RUB")
         private val AUTHENTICATION =
-            JwtAuthentication(UUID.randomUUID(), JwtAuthentication.Mode.USER, "USER", UserStatus.SOLVENCY_VERIFIED)
+            JwtAuthentication(UUID.randomUUID(), JwtAuthentication.Mode.USER, UserRole.SOLVENCY_VERIFIED)
         private val ACCOUNT_CREATING_REQUEST = AccountCreatingRequestDto("USD")
         private val USER = User()
     }

@@ -3,7 +3,7 @@ package ru.mfp.user.entity
 import jakarta.persistence.*
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.proxy.HibernateProxy
-import ru.mfp.common.model.UserStatus
+import ru.mfp.common.model.UserRole
 import java.time.LocalDateTime
 import java.util.*
 
@@ -23,8 +23,8 @@ open class User {
     open lateinit var passwordHash: String
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false, unique = true)
-    open lateinit var status: UserStatus
+    @Column(name = "role", nullable = false, unique = true)
+    open lateinit var role: UserRole
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false)
@@ -47,6 +47,6 @@ open class User {
 
     @Override
     override fun toString(): String {
-        return this::class.simpleName + "(id = $id , email = $email , userStatus = $status )"
+        return this::class.simpleName + "(id = $id , email = $email , userRole = $role )"
     }
 }

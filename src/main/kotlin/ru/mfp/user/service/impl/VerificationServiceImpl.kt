@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import ru.mfp.user.entity.EmailVerificationCode
-import ru.mfp.common.model.UserStatus
+import ru.mfp.common.model.UserRole
 import ru.mfp.user.exception.VerificationException
 import ru.mfp.user.repository.EmailVerificationCodeRepository
 import ru.mfp.user.repository.UserRepository
@@ -45,7 +45,7 @@ class VerificationServiceImpl(
         val user = userRepository.findById(authentication.id).orElseThrow {
             throw IllegalServerStateException("User data not found in database")
         }
-        if (user.status != UserStatus.NEW) {
+        if (user.role != UserRole.NEW) {
             log.error { "Attempt to verify by verified user, id=${authentication.id}" }
             throw VerificationException("You already verified your email!")
         }
@@ -61,7 +61,7 @@ class VerificationServiceImpl(
         log.info { "Verifying email code, user.id=${authentication.id}, code=${code}" }
         val user = userRepository.findById(authentication.id)
             .orElseThrow { throw IllegalServerStateException("User data not found in database") }
-        if (user.status != UserStatus.NEW) {
+        if (user.role != UserRole.NEW) {
             throw VerificationException("You already verified your email by code!")
         }
         val dbCode = repository.findFirstByUserOrderByCreatedAtDesc(user)
@@ -70,7 +70,7 @@ class VerificationServiceImpl(
             throw VerificationException("Code validation failed!")
         }
         log.info { "User with id=${user.id} was verified" }
-        user.status = UserStatus.EMAIL_VERIFIED
+        user.role = UserRole.EMAIL_VERIFIED
         userRepository.save(user)
     }
 
@@ -78,9 +78,9 @@ class VerificationServiceImpl(
         log.info { "Verifying solvency (cardId=$cardId, userId=${authentication.id}" }
         val user = userRepository.findById(authentication.id)
             .orElseThrow { throw IllegalServerStateException("User not found") }
-        if (user.status != UserStatus.EMAIL_VERIFIED) {
-            log.error { "Attempt to verify solvency with status: ${user.status}, userId=${user.id}" }
-            throw VerificationException("Invalid status for this action")
+        if (user.role != UserRole.EMAIL_VERIFIED) {
+            log.error { "Attempt to verify solvency with role: ${user.role}, userId=${user.id}" }
+            throw VerificationException("Invalid role for this action")
         }
         val card = cardService.findCardById(cardId, authentication)
         val paymentRequestDto = PaymentCreatingRequestDto(
@@ -105,7 +105,7 @@ class VerificationServiceImpl(
             throw VerificationException("Payment service has rejected a payment: ${paymentDto.description}")
         }
         log.info { "Solvency verifying payment success: $paymentDto" }
-        user.status = UserStatus.SOLVENCY_VERIFIED
+        user.role = UserRole.SOLVENCY_VERIFIED
         userRepository.saveAndFlush(user)
         val refundPaymentRequestDto = PaymentCreatingRequestDto(
             UUID.randomUUID(),
@@ -118,7 +118,7 @@ class VerificationServiceImpl(
             verificationCurrency.currencyCode,
             LocalDateTime.now()
         )
-        log.info { "User status updated (userid=${user.id}), refunding the payment" }
+        log.info { "User role updated (userid=${user.id}), refunding the payment" }
         try {
             paymentApiClientService.createPayment(refundPaymentRequestDto)
         } catch (e: PaymentApiException) {

@@ -10,7 +10,7 @@ import ru.mfp.account.exception.CardCreatingException
 import ru.mfp.account.mapper.CardMapper
 import ru.mfp.account.repository.CardRepository
 import ru.mfp.account.service.CardService
-import ru.mfp.common.model.UserStatus
+import ru.mfp.common.model.UserRole
 import ru.mfp.common.exception.IllegalServerStateException
 import ru.mfp.common.exception.ResourceNotFoundException
 import ru.mfp.common.model.JwtAuthentication
@@ -42,7 +42,7 @@ class CardServiceImpl(
         }
         val user = userRepository.findById(authentication.id)
             .orElseThrow { throw IllegalServerStateException("User data not found in database!") }
-        if (authentication.status == UserStatus.NEW) {
+        if (authentication.role == UserRole.NEW) {
             log.error { "Attempt to create a card without email verification (userId=${user.id})" }
             throw CardCreatingException("You need to verify email for this action")
         }
