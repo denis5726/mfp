@@ -4,14 +4,13 @@ import mu.KotlinLogging
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import ru.mfp.common.config.TokenProvider
+import ru.mfp.common.config.security.TokenProvider
 import ru.mfp.common.exception.ResourceNotFoundException
 import ru.mfp.common.model.JwtAuthentication
 import ru.mfp.user.dto.SignInDto
 import ru.mfp.user.dto.SignUpDto
 import ru.mfp.user.dto.TokenDto
 import ru.mfp.user.dto.UserDto
-import ru.mfp.common.model.UserRole
 import ru.mfp.user.exception.AuthorizationException
 import ru.mfp.user.exception.RegistrationException
 import ru.mfp.user.kafka.producer.AuthProducer
@@ -46,9 +45,6 @@ class AuthServiceImpl(
     override fun signIn(signInDto: SignInDto): TokenDto {
         val user = repository.findByEmail(signInDto.email)
             ?: throw ResourceNotFoundException("Account with email ${signInDto.email} is not found")
-        if (user.role == UserRole.BANNED) {
-            throw AuthorizationException("You have been banned")
-        }
         if (!passwordEncoder.matches(CharBuffer.wrap(signInDto.passwordHash), user.passwordHash)) {
             throw AuthorizationException("Password verification failed")
         }

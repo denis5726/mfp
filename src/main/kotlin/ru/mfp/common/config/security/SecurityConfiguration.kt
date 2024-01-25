@@ -1,4 +1,4 @@
-package ru.mfp.common.config
+package ru.mfp.common.config.security
 
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Bean

@@ -1,4 +1,4 @@
-package ru.mfp.common.config
+package ru.mfp.common.config.security
 
 import io.jsonwebtoken.JwtException
 import io.jsonwebtoken.Jwts
@@ -63,8 +63,8 @@ class TokenProvider(
             .body
         return JwtAuthentication(
             UUID.fromString(tokenBody.subject),
-            tokenBody[modeKey, JwtAuthentication.Mode::class.java],
-            tokenBody[roleKey, UserRole::class.java]
+            JwtAuthentication.Mode.valueOf(tokenBody[modeKey, String::class.java]),
+            UserRole.valueOf(tokenBody[roleKey, String::class.java])
         )
     }
 
