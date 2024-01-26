@@ -28,7 +28,7 @@ class AccountHistoryServiceImpl(
         record.account = account
         record.diff = diff
         record.changeReason = reason
-        log.info { "Saving account change: $record" }
-        repository.save(record)
+        repository.saveAndFlush(record)
+        log.info { "Saved account change: $record" }
     }
 }

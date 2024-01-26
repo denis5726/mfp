@@ -138,6 +138,18 @@ class PaymentController {
         )
     }
 
+    @GetMapping("/admin/accounts")
+    fun findAccounts(): List<Account> = data
+
+    @GetMapping("/admin/accounts/{id}")
+    fun findAccount(@PathVariable id: UUID) = data.first { it.id == id }
+
+    @PutMapping("/admin/accounts")
+    fun updateAccount(@RequestBody account: Account) {
+        data.removeIf { it.id == account.id }
+        data.add(account)
+    }
+
     private fun createResponse(
         paymentCreatingRequestDto: PaymentCreatingRequestDto,
         decision: Boolean,
@@ -146,7 +158,7 @@ class PaymentController {
         return PaymentDto(paymentCreatingRequestDto.id, UUID.randomUUID(), decision, description, LocalDateTime.now())
     }
 
-    private data class Account(
+    data class Account(
         val id: UUID,
         var amount: BigDecimal,
         val currency: Currency

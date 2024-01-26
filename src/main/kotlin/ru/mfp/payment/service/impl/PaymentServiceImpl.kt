@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import ru.mfp.account.repository.AccountRepository
 import ru.mfp.account.repository.CardRepository
-import ru.mfp.common.exception.IllegalServerStateException
 import ru.mfp.payment.client.PaymentApiClientService
 import ru.mfp.payment.dto.PaymentCreatingRequestDto
 import ru.mfp.payment.dto.PaymentEventDto
@@ -28,7 +27,7 @@ class PaymentServiceImpl(
     private val paymentProducer: PaymentProducer,
 ) : PaymentService {
     @Value("\${mfp.payment-service.main-bank-account-id}")
-    private var mainBankAccountId: UUID? = null
+    private var mainBankAccountId: UUID = UUID.randomUUID()
 
     override fun doPayment(
         userId: UUID,
@@ -47,8 +46,8 @@ class PaymentServiceImpl(
             throw PaymentCreatingException("Account and card currencies is not equal!")
         }
         val paymentRequest = buildAbstractRequest(
-            if (toBank) card.bankAccountId else getMainBankAccountId(),
-            if (toBank) getMainBankAccountId() else card.bankAccountId,
+            if (toBank) card.bankAccountId else mainBankAccountId,
+            if (toBank) mainBankAccountId else card.bankAccountId,
             amount,
             card.currency
         )
@@ -91,11 +90,6 @@ class PaymentServiceImpl(
             throw PaymentCreatingException("Payment declined: ${paymentDto.description}")
         }
         return PaymentCreatingResult(paymentDto) { paymentProducer.sendPaymentEvent(event) }
-    }
-
-    private fun getMainBankAccountId() = mainBankAccountId ?: run {
-        log.error { "Main bank account id is not provided!" }
-        throw IllegalServerStateException("Internal server error")
     }
 
     private fun buildAbstractRequest(idFrom: UUID, idTo: UUID, amount: BigDecimal, currency: Currency) =

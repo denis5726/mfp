@@ -6,7 +6,6 @@ import org.apache.kafka.clients.producer.ProducerRecord
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.stereotype.Component
-import ru.mfp.common.exception.MessageSendingException
 import ru.mfp.payment.dto.PaymentEventDto
 import ru.mfp.payment.kafka.producer.PaymentProducer
 import java.util.*
@@ -19,7 +18,7 @@ class PaymentProducerImpl(
     private val objectMapper: ObjectMapper
 ) : PaymentProducer {
     @Value("\${mfp.kafka.payment.topic}")
-    private var topic: String? = null
+    private var topic: String = "PAYMENT"
 
     override fun sendPaymentEvent(event: PaymentEventDto) {
         doSendInternal(event)
@@ -29,7 +28,7 @@ class PaymentProducerImpl(
         log.info { "Sending message: $payload" }
         kafkaTemplate.send(
             ProducerRecord(
-                topic ?: throw MessageSendingException("Topic for depositCreatedProducer is not provided"),
+                topic,
                 UUID.randomUUID(),
                 objectMapper.writeValueAsString(payload)
             )

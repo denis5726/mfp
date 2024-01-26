@@ -3,7 +3,10 @@ mfp:
     header: Authorization
     expiration: 86400
     secret: secret
-
+  account:
+    scheduled-updater-rate: 10000
+    time-diff: 60
+    percent-per-day: 1000.0
   stub:
     payment-service:
       enabled: true

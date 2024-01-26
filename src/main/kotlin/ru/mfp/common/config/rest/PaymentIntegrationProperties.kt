@@ -4,7 +4,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.stereotype.Component
 
 @Component
-@ConfigurationProperties("mfp.payment")
+@ConfigurationProperties("mfp.payment-service")
 data class PaymentIntegrationProperties(
     var url: String?,
     var api: PaymentIntegrationApiProperties?

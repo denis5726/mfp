@@ -34,7 +34,7 @@ class VerificationServiceImpl(
     private val paymentApiClientService: PaymentApiClientService
 ) : VerificationService {
     @Value("\${mfp.payment-service.main-bank-account-id}")
-    private var mainBankAccountId: UUID? = null
+    private var mainBankAccountId: UUID = UUID.randomUUID()
     private val verificationAmount = BigDecimal.valueOf(1)
     private val verificationCurrency = Currency.getInstance("RUB")
     private val codeLength: Int = 6
@@ -86,10 +86,7 @@ class VerificationServiceImpl(
         val paymentRequestDto = PaymentCreatingRequestDto(
             UUID.randomUUID(),
             card.bankAccountId,
-            mainBankAccountId ?: run {
-                log.error { "Main bank account id is not provided!" }
-                throw IllegalServerStateException("Internal server error")
-            },
+            mainBankAccountId,
             verificationAmount.toPlainString(),
             verificationCurrency.currencyCode,
             LocalDateTime.now()
@@ -109,10 +106,7 @@ class VerificationServiceImpl(
         userRepository.saveAndFlush(user)
         val refundPaymentRequestDto = PaymentCreatingRequestDto(
             UUID.randomUUID(),
-            mainBankAccountId ?: run {
-                log.error { "Main bank account id is not provided!" }
-                throw IllegalServerStateException("Internal server error")
-            },
+            mainBankAccountId,
             card.bankAccountId,
             verificationAmount.toPlainString(),
             verificationCurrency.currencyCode,

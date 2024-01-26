@@ -11,7 +11,7 @@ class EmailServiceImpl(
     private val emailSender: JavaMailSender
 ) : EmailService {
     @Value("\${spring.mail.username}")
-    private var from: String? = null
+    private var from: String = "username"
 
     override fun sendSimpleTextMessage(to: String, subject: String, text: String) {
         val message = SimpleMailMessage()
