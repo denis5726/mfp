@@ -55,6 +55,7 @@ class CardServiceImpl(
         return mapper.toDto(savedCard)
     }
 
+    @Transactional
     override fun deleteCard(id: UUID, authentication: JwtAuthentication) {
         val card = repository.findByIdAndUserId(id, authentication.id)
             ?: throw ResourceNotFoundException("Card not found")

@@ -2,6 +2,7 @@ package ru.mfp.account.service.impl
 
 import mu.KotlinLogging
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import ru.mfp.account.entity.AccountChangeReason
 import ru.mfp.account.entity.AccountHistoryRecord
 import ru.mfp.account.repository.AccountHistoryRecordRepository
@@ -19,6 +20,7 @@ class AccountHistoryServiceImpl(
     val accountRepository: AccountRepository
 ) : AccountHistoryService {
 
+    @Transactional
     override fun registerChange(accountId: UUID, diff: BigDecimal, reason: AccountChangeReason) {
         val record = AccountHistoryRecord()
         val account =

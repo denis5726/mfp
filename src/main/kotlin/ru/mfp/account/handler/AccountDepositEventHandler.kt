@@ -16,7 +16,13 @@ class AccountDepositEventHandler(
 
     override fun handle(event: PaymentEventDto) {
         if (event.decision) {
-            accountHistoryService.registerChange(event.accountId, BigDecimal(event.amount), AccountChangeReason.DEPOSIT)
+            val amount = BigDecimal(event.amount)
+            accountHistoryService.registerChange(
+                event.accountId,
+                if (event.type == PaymentEventDto.PaymentType.DEPOSIT) amount else -amount,
+                if (event.type == PaymentEventDto.PaymentType.DEPOSIT)
+                    AccountChangeReason.DEPOSIT else AccountChangeReason.WITHDRAW
+            )
         }
     }
 }

@@ -7,15 +7,15 @@ import ru.mfp.account.handler.AccountDepositEventHandler
 import ru.mfp.common.event.EventProcessor
 
 @Component
-class AccountDepositKafkaListener(
+class AccountPaymentKafkaListener(
     private val processor: EventProcessor,
     private val handler: AccountDepositEventHandler
 ) {
 
     @KafkaListener(
-        topics = ["\${mfp.kafka.deposit.topic}"],
+        topics = ["\${mfp.kafka.payment.topic}"],
         groupId = "\${mfp.kafka.account.consumer-group}",
         autoStartup = "true"
     )
-    fun listenToDeposit(message: Message<String>) = processor.process(handler, message)
+    fun listenToPayment(message: Message<String>) = processor.process(handler, message)
 }

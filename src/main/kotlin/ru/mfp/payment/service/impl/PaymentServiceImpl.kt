@@ -27,7 +27,7 @@ class PaymentServiceImpl(
     private val accountRepository: AccountRepository,
     private val paymentProducer: PaymentProducer,
 ) : PaymentService {
-    @Value("\${mfp.payment.main-bank-account-id}")
+    @Value("\${mfp.payment-service.main-bank-account-id}")
     private var mainBankAccountId: UUID? = null
 
     override fun doPayment(

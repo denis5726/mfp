@@ -33,7 +33,7 @@ class VerificationServiceImpl(
     private val cardService: CardService,
     private val paymentApiClientService: PaymentApiClientService
 ) : VerificationService {
-    @Value("\${mfp.payment.main-bank-account-id}")
+    @Value("\${mfp.payment-service.main-bank-account-id}")
     private var mainBankAccountId: UUID? = null
     private val verificationAmount = BigDecimal.valueOf(1)
     private val verificationCurrency = Currency.getInstance("RUB")

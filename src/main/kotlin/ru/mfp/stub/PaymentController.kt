@@ -14,7 +14,7 @@ import kotlin.random.Random
 
 @RestController
 @RequestMapping("/stub")
-@ConditionalOnProperty(value = ["mfp.stub.payment.enabled"], havingValue = "true")
+@ConditionalOnProperty(value = ["mfp.stub.payment-service.enabled"], havingValue = "true")
 class PaymentController {
     private val payments = mutableListOf<PaymentCreatingRequestDto>()
     private val data = mutableListOf<Account>()

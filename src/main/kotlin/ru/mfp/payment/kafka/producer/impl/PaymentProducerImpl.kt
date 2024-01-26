@@ -18,7 +18,7 @@ class PaymentProducerImpl(
     private val kafkaTemplate: KafkaTemplate<UUID, String>,
     private val objectMapper: ObjectMapper
 ) : PaymentProducer {
-    @Value("\${mfp.kafka.deposit.topic}")
+    @Value("\${mfp.kafka.payment.topic}")
     private var topic: String? = null
 
     override fun sendPaymentEvent(event: PaymentEventDto) {

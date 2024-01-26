@@ -17,7 +17,7 @@ class AuthProducerImpl(
     private val kafkaTemplate: KafkaTemplate<UUID, String>,
     private val objectMapper: ObjectMapper
 ) : AuthProducer {
-    @Value("\${mfp.kafka.auth.topic}")
+    @Value("\${mfp.kafka.user.topic}")
     private var topic: String? = null
 
     override fun sendRegistrationEvent(user: User) {
