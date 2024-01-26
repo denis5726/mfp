@@ -6,7 +6,7 @@ import org.springframework.web.client.getForObject
 import org.springframework.web.client.postForObject
 import ru.mfp.account.dto.AccountCreatingRequestDto
 import ru.mfp.common.config.rest.PaymentIntegrationProperties
-import ru.mfp.payment.exception.PaymentApiException
+import ru.mfp.payment.exception.PaymentServiceApiException
 import ru.mfp.payment.client.PaymentApiClientService
 import ru.mfp.payment.dto.CurrencyExchangeRatesDto
 import ru.mfp.payment.dto.PaymentCreatingRequestDto
@@ -52,6 +52,6 @@ class PaymentApiClientServiceImpl(
         }
 
     private fun handleException(e: Exception): Nothing {
-        throw PaymentApiException(e.message ?: "Empty message")
+        throw PaymentServiceApiException(e.message ?: "Empty message")
     }
 }

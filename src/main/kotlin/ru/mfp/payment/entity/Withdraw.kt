@@ -1,6 +1,7 @@
 package ru.mfp.payment.entity
 
 import jakarta.persistence.*
+import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.proxy.HibernateProxy
 import ru.mfp.account.entity.Account
 import ru.mfp.account.entity.Card
@@ -34,6 +35,7 @@ open class Withdraw {
     @Column(name = "amount", nullable = false, precision = 19, scale = 2)
     open lateinit var amount: BigDecimal
 
+    @CreationTimestamp
     @Column(name = "created_at", nullable = false)
     open lateinit var createdAt: LocalDateTime
 

@@ -4,17 +4,17 @@ import org.springframework.stereotype.Component
 import ru.mfp.account.entity.AccountChangeReason
 import ru.mfp.account.service.AccountHistoryService
 import ru.mfp.common.event.EventHandler
-import ru.mfp.payment.dto.DepositEventDto
+import ru.mfp.payment.dto.PaymentEventDto
 import java.math.BigDecimal
 
 @Component
 class AccountDepositEventHandler(
     private val accountHistoryService: AccountHistoryService
-) : EventHandler<DepositEventDto> {
+) : EventHandler<PaymentEventDto> {
 
-    override fun getEventClass(): Class<DepositEventDto> = DepositEventDto::class.java
+    override fun getEventClass(): Class<PaymentEventDto> = PaymentEventDto::class.java
 
-    override fun handle(event: DepositEventDto) {
+    override fun handle(event: PaymentEventDto) {
         if (event.decision) {
             accountHistoryService.registerChange(event.accountId, BigDecimal(event.amount), AccountChangeReason.DEPOSIT)
         }

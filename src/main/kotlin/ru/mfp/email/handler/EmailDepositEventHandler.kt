@@ -4,7 +4,7 @@ import mu.KotlinLogging
 import org.springframework.stereotype.Component
 import ru.mfp.user.service.UserService
 import ru.mfp.common.event.EventHandler
-import ru.mfp.payment.dto.DepositEventDto
+import ru.mfp.payment.dto.PaymentEventDto
 import ru.mfp.email.service.EmailService
 import java.time.format.DateTimeFormatter
 
@@ -14,7 +14,7 @@ private val log = KotlinLogging.logger {  }
 class EmailDepositEventHandler(
     private val emailService: EmailService,
     private val userService: UserService
-) : EventHandler<DepositEventDto> {
+) : EventHandler<PaymentEventDto> {
     private val depositCreatedMessageSubject = "Ваш счёт был пополнен!"
     private val depositCreatedMessageTemplate =
         "Был осуществлён перевод на сумму %s%s.\nИдентификатор перевода: %s.\nВремя операции: %s."
@@ -23,10 +23,13 @@ class EmailDepositEventHandler(
         "Ошибка при переводе от платёжного сервиса.\nСообщение: %s.\nИдентификатор перевода: %s.\nВремя операции: %s."
     private val dateTimeFormatter = DateTimeFormatter.ofPattern("YYYY-MM-DD HH:mm:ss")
 
-    override fun getEventClass(): Class<DepositEventDto> = DepositEventDto::class.java
+    override fun getEventClass(): Class<PaymentEventDto> = PaymentEventDto::class.java
 
-    override fun handle(event: DepositEventDto) {
+    override fun handle(event: PaymentEventDto) {
         log.info { "Sending a message by an event: $event" }
+        if (event.type != PaymentEventDto.PaymentType.DEPOSIT) {
+            return
+        }
         if (event.decision) {
             sendSuccessDepositMessage(event)
             return
@@ -34,7 +37,7 @@ class EmailDepositEventHandler(
         sendErrorDepositMessage(event)
     }
 
-    private fun sendSuccessDepositMessage(event: DepositEventDto) {
+    private fun sendSuccessDepositMessage(event: PaymentEventDto) {
         emailService.sendSimpleTextMessage(
             getUserEmail(event),
             depositCreatedMessageSubject,
@@ -47,7 +50,7 @@ class EmailDepositEventHandler(
         )
     }
 
-    private fun sendErrorDepositMessage(event: DepositEventDto) {
+    private fun sendErrorDepositMessage(event: PaymentEventDto) {
         emailService.sendSimpleTextMessage(
             getUserEmail(event),
             depositErrorMessageSubject,
@@ -59,5 +62,5 @@ class EmailDepositEventHandler(
         )
     }
 
-    private fun getUserEmail(event: DepositEventDto) = userService.findById(event.userId).email
+    private fun getUserEmail(event: PaymentEventDto) = userService.findById(event.userId).email
 }

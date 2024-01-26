@@ -4,9 +4,7 @@ import ru.mfp.common.dto.CommonEventDto
 import java.time.LocalDateTime
 import java.util.*
 
-data class DepositEventDto(
-    override val eventId: UUID,
-    override val eventTime: LocalDateTime,
+data class PaymentEventDto(
     val userId: UUID,
     val paymentId: UUID,
     val operationId: UUID?,
@@ -15,5 +13,13 @@ data class DepositEventDto(
     val decision: Boolean,
     val description: String?,
     val amount: String,
-    val currency: String
-) : CommonEventDto(eventId, eventTime)
+    val currency: String,
+    val type: PaymentType,
+    override val eventId: UUID = UUID.randomUUID(),
+    override val eventTime: LocalDateTime = LocalDateTime.now()
+) : CommonEventDto(eventId, eventTime) {
+
+    enum class PaymentType {
+        DEPOSIT, WITHDRAW
+    }
+}

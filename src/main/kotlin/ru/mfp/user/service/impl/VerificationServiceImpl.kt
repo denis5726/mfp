@@ -13,7 +13,7 @@ import ru.mfp.user.service.VerificationService
 import ru.mfp.account.service.CardService
 import ru.mfp.common.exception.IllegalServerStateException
 import ru.mfp.common.model.JwtAuthentication
-import ru.mfp.payment.exception.PaymentApiException
+import ru.mfp.payment.exception.PaymentServiceApiException
 import ru.mfp.email.service.EmailVerificationService
 import ru.mfp.payment.client.PaymentApiClientService
 import ru.mfp.payment.dto.PaymentCreatingRequestDto
@@ -96,7 +96,7 @@ class VerificationServiceImpl(
         )
         val paymentDto = try {
             paymentApiClientService.createPayment(paymentRequestDto)
-        } catch (e: PaymentApiException) {
+        } catch (e: PaymentServiceApiException) {
             log.error { "Payment service has return an error: ${e.message}" }
             throw VerificationException("Payment service error: ${e.message}")
         }
@@ -121,7 +121,7 @@ class VerificationServiceImpl(
         log.info { "User role updated (userid=${user.id}), refunding the payment" }
         try {
             paymentApiClientService.createPayment(refundPaymentRequestDto)
-        } catch (e: PaymentApiException) {
+        } catch (e: PaymentServiceApiException) {
             log.error { "Exception during refund verification payment: ${e.message}" }
         }
     }

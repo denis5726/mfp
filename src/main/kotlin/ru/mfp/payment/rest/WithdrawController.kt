@@ -3,27 +3,27 @@ package ru.mfp.payment.rest
 import org.springframework.web.bind.annotation.*
 import ru.mfp.common.config.security.aop.NotBanned
 import ru.mfp.common.config.security.aop.SolvencyVerified
-import ru.mfp.payment.dto.DepositCreatingRequestDto
+import ru.mfp.payment.dto.WithdrawCreatingRequestDto
 import ru.mfp.common.model.JwtAuthentication
-import ru.mfp.payment.service.DepositService
+import ru.mfp.payment.service.WithdrawService
 
 @RestController
-@RequestMapping("/deposits")
-class DepositController(
-    private val service: DepositService
+@RequestMapping("/withdraws")
+class WithdrawController(
+    private val service: WithdrawService
 ) {
 
     @GetMapping
     @NotBanned
-    fun findDeposits(
+    fun findWithdraws(
         @RequestParam(required = false, defaultValue = "0") page: Int,
         authentication: JwtAuthentication
-    ) = service.findDeposits(page, authentication)
+    ) = service.findWithdraws(page, authentication)
 
     @PostMapping
     @SolvencyVerified
-    fun addDeposit(
-        @RequestBody depositCreatingRequestDto: DepositCreatingRequestDto,
+    fun addWithdraw(
+        @RequestBody withdrawCreatingRequestDto: WithdrawCreatingRequestDto,
         authentication: JwtAuthentication
-    ) = service.addDeposit(depositCreatingRequestDto, authentication)
+    ) = service.addWithdraw(withdrawCreatingRequestDto, authentication)
 }
