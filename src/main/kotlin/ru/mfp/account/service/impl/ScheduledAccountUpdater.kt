@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 import ru.mfp.account.entity.AccountChangeReason
 import ru.mfp.account.repository.AccountHistoryRecordRepository
-import ru.mfp.account.repository.AccountRepository
 import ru.mfp.account.service.AccountHistoryService
 import java.math.BigDecimal
 import java.time.LocalDateTime
@@ -19,7 +18,6 @@ private val log = KotlinLogging.logger { }
 class ScheduledAccountUpdater(
     private val accountHistoryService: AccountHistoryService,
     private val repository: AccountHistoryRecordRepository,
-    private val accountRepository: AccountRepository
 ) {
     @Value("\${mfp.account.time-diff}")
     private var timeDiffInSeconds = 0L
@@ -41,12 +39,8 @@ class ScheduledAccountUpdater(
                 BigDecimal.valueOf(rateInMillis, defaultScale) /
                         BigDecimal.valueOf(TimeUnit.MILLISECONDS.convert(1L, TimeUnit.DAYS), defaultScale)
             val diff = amount * BigDecimal.valueOf(percentPerDay) * partOfDay / BigDecimal.valueOf(100L)
-            val account = accountRepository.findById(it.getId()).orElseThrow()
-            account.amount += diff
             log.info { "Diff: $diff" }
             accountHistoryService.registerChange(it.getId(), diff, AccountChangeReason.PERCENTAGE_CALCULATION)
-            accountRepository.save(account)
-            log.info { "Account after updating: $account" }
         }
     }
 }
