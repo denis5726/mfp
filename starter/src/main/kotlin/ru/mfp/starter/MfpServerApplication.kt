@@ -1,4 +1,4 @@
-package ru.mfp
+package ru.mfp.starter
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration
@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement
 
 @EnableTransactionManagement
 @EnableScheduling
-@SpringBootApplication(exclude = [UserDetailsServiceAutoConfiguration::class])
+@SpringBootApplication(exclude = [UserDetailsServiceAutoConfiguration::class], scanBasePackages = ["ru.mfp"])
 class MfpServerApplication
 
 fun main(args: Array<String>) {
