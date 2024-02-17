@@ -47,7 +47,7 @@ class CardServiceImpl(
             throw CardCreatingException("Card with this bankAccountId (${cardCreatingRequestDto.bankAccountId}) already exists")
         }
         val card = Card()
-        card.user = user
+        card.userId = user
         card.bankAccountId = cardCreatingRequestDto.bankAccountId
         card.currency = currency
         val savedCard = repository.saveAndFlush(card)

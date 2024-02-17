@@ -7,6 +7,7 @@ plugins {
 	kotlin("plugin.spring") version "1.8.22"
 	kotlin("plugin.jpa") version "1.8.22"
 	kotlin("kapt") version "1.4.32"
+	kotlin("plugin.allopen") version "1.9.22"
 }
 
 group = "ru.mfp"
@@ -71,6 +72,12 @@ kapt {
 		arg("mapstruct.unmappedTargetPolicy", "ignore")
 		arg("mapstruct.disableBuilders", "true")
 	}
+}
+
+allOpen {
+	annotation("jakarta.persistence.Entity")
+	annotation("jakarta.persistence.Embeddable")
+	annotation("jakarta.persistence.MappedSuperclass")
 }
 
 tasks.withType<Test> {

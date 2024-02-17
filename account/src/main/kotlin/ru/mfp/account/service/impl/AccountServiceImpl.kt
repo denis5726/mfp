@@ -46,7 +46,7 @@ class AccountServiceImpl(
             throw AccountCreatingException("You already have an account!")
         }
         val account = Account()
-        account.user = user
+        account.userId = user
         account.amount = BigDecimal.valueOf(1000L)
         // Когда будет несколько счетов, подарок начислять надо только на первый
         account.amount = creationGift

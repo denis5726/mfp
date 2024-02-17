@@ -56,8 +56,8 @@ class DepositServiceImpl(
         val payment = result.paymentDto
         val account = accountRepository.findById(depositCreatingRequestDto.accountId).orElseThrow()
         val deposit = Deposit()
-        deposit.card = cardRepository.findById(depositCreatingRequestDto.cardId).orElseThrow()
-        deposit.account = account
+        deposit.cardId = cardRepository.findById(depositCreatingRequestDto.cardId).orElseThrow()
+        deposit.accountId = account
         deposit.paymentId = payment.paymentId
         deposit.operationId = payment.operationId
         deposit.amount = depositCreatingRequestDto.amount
