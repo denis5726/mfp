@@ -47,6 +47,9 @@ dependencies {
     implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
     runtimeOnly("org.postgresql:postgresql")
     kapt("org.mapstruct:mapstruct-processor:$mapStructVersion")
+
+    implementation(project(":common"))
+
     testImplementation("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-params:$junitVersion")

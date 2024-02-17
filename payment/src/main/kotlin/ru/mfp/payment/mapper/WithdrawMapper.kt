@@ -9,9 +9,9 @@ import ru.mfp.payment.entity.Withdraw
 @Mapper
 interface WithdrawMapper {
 
-    @Mapping(target = "accountId", source = "account.id")
-    @Mapping(target = "cardId", source = "card.id")
-    @Mapping(target = "currency", source = "account.currency")
+    @Mapping(target = "accountId", source = "accountId.id")
+    @Mapping(target = "cardId", source = "cardId.id")
+    @Mapping(target = "currency", source = "accountId.currency")
     fun toDto(deposit: Withdraw): WithdrawDto
 
     fun toDtoList(deposit: List<Withdraw>): List<WithdrawDto>

@@ -66,8 +66,8 @@ class WithdrawServiceImpl(
         )
         val payment = result.paymentDto
         val withdraw = Withdraw()
-        withdraw.card = cardRepository.findById(withdrawCreatingRequestDto.cardId).orElseThrow()
-        withdraw.account = account
+        withdraw.cardId = cardRepository.findById(withdrawCreatingRequestDto.cardId).orElseThrow()
+        withdraw.accountId = account
         withdraw.paymentId = payment.paymentId
         withdraw.operationId = payment.operationId
         withdraw.amount = withdrawCreatingRequestDto.amount
