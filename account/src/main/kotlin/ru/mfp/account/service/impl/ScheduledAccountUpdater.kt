@@ -1,5 +1,8 @@
 package ru.mfp.account.service.impl
 
+import java.math.BigDecimal
+import java.time.ZonedDateTime
+import java.util.concurrent.TimeUnit
 import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.scheduling.annotation.Scheduled
@@ -8,9 +11,6 @@ import org.springframework.transaction.annotation.Transactional
 import ru.mfp.account.entity.AccountChangeReason
 import ru.mfp.account.repository.AccountHistoryRecordRepository
 import ru.mfp.account.service.AccountHistoryService
-import java.math.BigDecimal
-import java.time.LocalDateTime
-import java.util.concurrent.TimeUnit
 
 private val log = KotlinLogging.logger { }
 
@@ -32,7 +32,7 @@ class ScheduledAccountUpdater(
     @Scheduled(fixedRateString = "\${mfp.account.scheduled-updater-rate}")
     fun update() {
         log.info { "Updating accounts" }
-        repository.getSnapshots(LocalDateTime.now().minusSeconds(timeDiffInSeconds)).forEach {
+        repository.getSnapshots(ZonedDateTime.now().minusSeconds(timeDiffInSeconds)).forEach {
             log.info { "Updating account snapshot: AccountSnapshot(id=${it.getId()}, amount=${it.getAmount()})" }
             val amount = it.getAmount()
             val partOfDay =

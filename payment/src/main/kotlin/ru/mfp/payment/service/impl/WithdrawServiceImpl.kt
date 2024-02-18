@@ -30,15 +30,13 @@ class WithdrawServiceImpl(
     private val pageSize = 30
     private val requiredTotalDepositForWithdrawing = BigDecimal.valueOf(1000)
 
-    override fun findWithdraws(page: Int, authentication: JwtAuthentication): List<WithdrawDto> {
-        val accounts = accountService.findAccounts(authentication)
-        return mapper.toDtoList(
+    override fun findWithdraws(page: Int, authentication: JwtAuthentication): List<WithdrawDto> =
+        mapper.toDtoList(
             repository.findByAccountIdInOrderByCreatedAtDesc(
-                accounts.map { it.id },
+                getUserAccountsIds(authentication),
                 PageRequest.of(page, pageSize)
             ).content
         )
-    }
 
 
     @Transactional
@@ -52,7 +50,7 @@ class WithdrawServiceImpl(
         if (BigDecimal(account.amount) < withdrawCreatingRequestDto.amount) {
             throw PaymentCreatingException("You don't have enough of money")
         }
-        val totalDepositAmount = depositRepository.findSumOfAllDepositAmounts(authentication.id)
+        val totalDepositAmount = getTotalDepositAmount(authentication)
         if (totalDepositAmount < requiredTotalDepositForWithdrawing) {
             throw PaymentCreatingException(
                 "You need to have total deposit amount greater or equal than $requiredTotalDepositForWithdrawing"
@@ -78,4 +76,12 @@ class WithdrawServiceImpl(
         result.messageCallback()
         return dto
     }
+
+    private fun getUserAccountsIds(authentication: JwtAuthentication) =
+        accountService.findAccounts(authentication).map { it.id }
+
+    private fun getTotalDepositAmount(authentication: JwtAuthentication) =
+        depositRepository.findSumOfAllDepositAmounts(
+            getUserAccountsIds(authentication)
+        )
 }

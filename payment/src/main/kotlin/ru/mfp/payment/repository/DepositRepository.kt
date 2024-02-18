@@ -14,6 +14,6 @@ interface DepositRepository : JpaRepository<Deposit, UUID> {
 
     fun findByPaymentId(paymentId: UUID): Deposit?
 
-    @Query("SELECT COALESCE(SUM(d.amount), 0) FROM Deposit d WHERE d.account.user.id = :userId")
-    fun findSumOfAllDepositAmounts(userId: UUID): BigDecimal
+    @Query("SELECT COALESCE(SUM(d.amount), 0) FROM Deposit d WHERE d.accountId IN :accountIds")
+    fun findSumOfAllDepositAmounts(accountIds: List<UUID>): BigDecimal
 }
