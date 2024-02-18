@@ -3,7 +3,6 @@ package ru.mfp.email.service.impl
 import mu.KotlinLogging
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import ru.mfp.user.entity.EmailVerificationCode
 import ru.mfp.email.service.EmailService
 import ru.mfp.email.service.EmailVerificationService
 
@@ -18,8 +17,6 @@ class EmailVerificationServiceImpl(
 
     @Transactional
     override fun sendVerificationCode(email: String, code: String) {
-        val emailVerificationCode = EmailVerificationCode()
-        emailVerificationCode.value = code
         log.info { "Generated code: $code" }
         emailService.sendSimpleTextMessage(email, messageSubject, messageText.format(code))
         log.info { "Sent email message" }

@@ -1,4 +1,4 @@
-package ru.mfp.user.exception
+package ru.mfp.verification.exception
 
 import org.springframework.http.HttpStatus
 import ru.mfp.common.exception.MfpApiException

@@ -1,12 +1,12 @@
 package ru.mfp.email.handler
 
+import java.time.format.DateTimeFormatter
 import mu.KotlinLogging
 import org.springframework.stereotype.Component
-import ru.mfp.user.service.UserService
+import ru.mfp.common.dto.PaymentEventDto
 import ru.mfp.common.event.EventHandler
-import ru.mfp.payment.dto.PaymentEventDto
 import ru.mfp.email.service.EmailService
-import java.time.format.DateTimeFormatter
+import ru.mfp.user.service.UserService
 
 private val log = KotlinLogging.logger {  }
 

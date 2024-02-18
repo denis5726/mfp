@@ -49,7 +49,10 @@ dependencies {
     kapt("org.mapstruct:mapstruct-processor:$mapStructVersion")
 
     implementation(project(":common"))
+    implementation(project(":payment"))
     implementation(project(":account"))
+    implementation(project(":email"))
+    implementation(project(":user"))
 
     testImplementation("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")

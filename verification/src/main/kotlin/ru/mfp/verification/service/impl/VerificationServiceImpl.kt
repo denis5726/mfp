@@ -1,26 +1,26 @@
-package ru.mfp.user.service.impl
+package ru.mfp.verification.service.impl
 
+import java.math.BigDecimal
+import java.time.LocalDateTime
+import java.util.Currency
+import java.util.UUID
+import kotlin.random.Random
 import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import ru.mfp.user.entity.EmailVerificationCode
-import ru.mfp.common.model.UserRole
-import ru.mfp.user.exception.VerificationException
-import ru.mfp.user.repository.EmailVerificationCodeRepository
-import ru.mfp.user.repository.UserRepository
-import ru.mfp.user.service.VerificationService
 import ru.mfp.account.service.CardService
-import ru.mfp.common.exception.IllegalServerStateException
 import ru.mfp.common.model.JwtAuthentication
-import ru.mfp.payment.exception.PaymentServiceApiException
+import ru.mfp.common.model.UserRole
 import ru.mfp.email.service.EmailVerificationService
 import ru.mfp.payment.client.PaymentApiClientService
 import ru.mfp.payment.dto.PaymentCreatingRequestDto
-import java.math.BigDecimal
-import java.time.LocalDateTime
-import java.util.*
-import kotlin.random.Random
+import ru.mfp.payment.exception.PaymentServiceApiException
+import ru.mfp.user.service.UserService
+import ru.mfp.verification.entity.EmailVerificationCode
+import ru.mfp.verification.exception.VerificationException
+import ru.mfp.verification.repository.EmailVerificationCodeRepository
+import ru.mfp.verification.service.VerificationService
 
 private val log = KotlinLogging.logger { }
 
@@ -29,12 +29,12 @@ private val log = KotlinLogging.logger { }
 class VerificationServiceImpl(
     private val emailVerificationService: EmailVerificationService,
     private val repository: EmailVerificationCodeRepository,
-    private val userRepository: UserRepository,
+    private val userService: UserService,
     private val cardService: CardService,
     private val paymentApiClientService: PaymentApiClientService
 ) : VerificationService {
     @Value("\${mfp.payment-service.main-bank-account-id}")
-    private var mainBankAccountId: UUID = UUID.randomUUID()
+    private lateinit var mainBankAccountId: UUID
     private val verificationAmount = BigDecimal.valueOf(1)
     private val verificationCurrency = Currency.getInstance("RUB")
     private val codeLength: Int = 6
@@ -42,43 +42,36 @@ class VerificationServiceImpl(
 
     override fun generateEmailCode(authentication: JwtAuthentication) {
         log.info { "Generating email verification code for user with id=${authentication.id}" }
-        val user = userRepository.findById(authentication.id).orElseThrow {
-            throw IllegalServerStateException("User data not found in database")
-        }
-        if (user.role != UserRole.NEW) {
+        val user = userService.findById(authentication.id)
+        if (user.role != UserRole.NEW.toString()) {
             log.error { "Attempt to verify by verified user, id=${authentication.id}" }
             throw VerificationException("You already verified your email!")
         }
         val code = generateCode()
         emailVerificationService.sendVerificationCode(user.email, code)
-        val emailVerificationCode = EmailVerificationCode()
-        emailVerificationCode.value = code
-        emailVerificationCode.user = user
-        repository.save(emailVerificationCode)
+        repository.save(EmailVerificationCode(userId = user.id, value = code))
     }
 
     override fun verifyEmailCode(code: String, authentication: JwtAuthentication) {
         log.info { "Verifying email code, user.id=${authentication.id}, code=${code}" }
-        val user = userRepository.findById(authentication.id)
-            .orElseThrow { throw IllegalServerStateException("User data not found in database") }
-        if (user.role != UserRole.NEW) {
+        val user = userService.findById(authentication.id)
+        if (user.role != UserRole.NEW.toString()) {
             throw VerificationException("You already verified your email by code!")
         }
-        val dbCode = repository.findFirstByUserOrderByCreatedAtDesc(user)
+        val dbCode = repository.findFirstByUserIdOrderByCreatedAtDesc(user.id)
             ?: throw VerificationException("Verification code was not created!")
         if (dbCode.value != code) {
             throw VerificationException("Code validation failed!")
         }
         log.info { "User with id=${user.id} was verified" }
-        user.role = UserRole.EMAIL_VERIFIED
-        userRepository.save(user)
+        userService.updateRole(user.id, UserRole.EMAIL_VERIFIED.toString())
     }
 
+    // В будущем часть нужно вынести в модуль payment (публиковать событие о проведённой проверке)
     override fun verifySolvency(cardId: UUID, authentication: JwtAuthentication) {
         log.info { "Verifying solvency (cardId=$cardId, userId=${authentication.id}" }
-        val user = userRepository.findById(authentication.id)
-            .orElseThrow { throw IllegalServerStateException("User not found") }
-        if (user.role != UserRole.EMAIL_VERIFIED) {
+        val user = userService.findById(authentication.id)
+        if (user.role != UserRole.EMAIL_VERIFIED.toString()) {
             log.error { "Attempt to verify solvency with role: ${user.role}, userId=${user.id}" }
             throw VerificationException("Invalid role for this action")
         }
@@ -102,8 +95,7 @@ class VerificationServiceImpl(
             throw VerificationException("Payment service has rejected a payment: ${paymentDto.description}")
         }
         log.info { "Solvency verifying payment success: $paymentDto" }
-        user.role = UserRole.SOLVENCY_VERIFIED
-        userRepository.saveAndFlush(user)
+        userService.updateRole(user.id, UserRole.SOLVENCY_VERIFIED.toString())
         val refundPaymentRequestDto = PaymentCreatingRequestDto(
             UUID.randomUUID(),
             mainBankAccountId,

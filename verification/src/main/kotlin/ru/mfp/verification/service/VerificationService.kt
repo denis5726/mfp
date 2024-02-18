@@ -1,4 +1,4 @@
-package ru.mfp.user.service
+package ru.mfp.verification.service
 
 import ru.mfp.common.model.JwtAuthentication
 import java.util.UUID

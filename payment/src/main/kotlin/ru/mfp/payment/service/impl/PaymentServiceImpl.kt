@@ -1,47 +1,47 @@
 package ru.mfp.payment.service.impl
 
+import java.math.BigDecimal
+import java.time.LocalDateTime
+import java.util.Currency
+import java.util.UUID
 import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
-import ru.mfp.account.repository.AccountRepository
-import ru.mfp.account.repository.CardRepository
+import ru.mfp.account.service.AccountService
+import ru.mfp.account.service.CardService
+import ru.mfp.common.dto.PaymentEventDto
+import ru.mfp.common.model.JwtAuthentication
 import ru.mfp.payment.client.PaymentApiClientService
 import ru.mfp.payment.dto.PaymentCreatingRequestDto
-import ru.mfp.payment.dto.PaymentEventDto
 import ru.mfp.payment.exception.PaymentCreatingException
 import ru.mfp.payment.exception.PaymentServiceApiException
 import ru.mfp.payment.kafka.producer.PaymentProducer
 import ru.mfp.payment.model.PaymentCreatingResult
 import ru.mfp.payment.service.PaymentService
-import java.math.BigDecimal
-import java.time.LocalDateTime
-import java.util.*
 
 private val log = KotlinLogging.logger { }
 
 @Component
 class PaymentServiceImpl(
     private val paymentApiClientService: PaymentApiClientService,
-    private val cardRepository: CardRepository,
-    private val accountRepository: AccountRepository,
+    private val cardRepository: CardService,
+    private val accountRepository: AccountService,
     private val paymentProducer: PaymentProducer,
 ) : PaymentService {
     @Value("\${mfp.payment-service.main-bank-account-id}")
-    private var mainBankAccountId: UUID = UUID.randomUUID()
+    private lateinit var mainBankAccountId: UUID
 
     override fun doPayment(
-        userId: UUID,
+        authentication: JwtAuthentication,
         accountId: UUID,
         cardId: UUID,
         amount: BigDecimal,
         toBank: Boolean
     ): PaymentCreatingResult {
-        val card = cardRepository.findById(cardId).orElseThrow {
-            throw PaymentCreatingException("Card with id=$cardId is not found")
-        }
-        val account = accountRepository.findById(accountId).orElseThrow {
+        val card = cardRepository.findCardById(cardId, authentication)
+        val account = accountRepository.findAccounts(authentication)
+            .firstOrNull {it.id == accountId } ?:
             throw PaymentCreatingException("Account with id=$accountId is not found")
-        }
         if (account.currency != card.currency) {
             throw PaymentCreatingException("Account and card currencies is not equal!")
         }
@@ -49,7 +49,7 @@ class PaymentServiceImpl(
             if (toBank) card.bankAccountId else mainBankAccountId,
             if (toBank) mainBankAccountId else card.bankAccountId,
             amount,
-            card.currency
+            Currency.getInstance(card.currency)
         )
         val paymentType = if (toBank) PaymentEventDto.PaymentType.DEPOSIT else PaymentEventDto.PaymentType.WITHDRAW
         val paymentDto = try {
@@ -57,7 +57,7 @@ class PaymentServiceImpl(
         } catch (e: PaymentServiceApiException) {
             paymentProducer.sendPaymentEvent(
                 PaymentEventDto(
-                    userId,
+                    authentication.id,
                     paymentRequest.id,
                     null,
                     accountId,
@@ -65,14 +65,14 @@ class PaymentServiceImpl(
                     false,
                     e.message,
                     amount.toString(),
-                    card.currency.currencyCode,
+                    card.currency,
                     paymentType
                 )
             )
             throw PaymentCreatingException("Payment service error: ${e.message}")
         }
         val event = PaymentEventDto(
-            userId,
+            authentication.id,
             paymentRequest.id,
             paymentDto.operationId,
             accountId,
@@ -80,7 +80,7 @@ class PaymentServiceImpl(
             paymentDto.decision,
             paymentDto.description,
             amount.toString(),
-            card.currency.currencyCode,
+            card.currency,
             paymentType
         )
 

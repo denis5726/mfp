@@ -1,16 +1,23 @@
 package ru.mfp.stub
 
 import jakarta.annotation.PostConstruct
+import java.math.BigDecimal
+import java.time.LocalDateTime
+import java.util.Currency
+import java.util.UUID
+import kotlin.random.Random
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
 import ru.mfp.payment.dto.CurrencyExchangeRatesDto
 import ru.mfp.payment.dto.PaymentCreatingRequestDto
 import ru.mfp.payment.dto.PaymentDto
-import java.math.BigDecimal
-import java.time.LocalDateTime
-import java.util.*
-import kotlin.random.Random
 
 @RestController
 @RequestMapping("/stub")

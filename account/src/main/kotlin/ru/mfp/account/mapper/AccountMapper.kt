@@ -7,7 +7,7 @@ import ru.mfp.account.entity.Account
 @Mapper
 interface AccountMapper {
 
-    fun toDto(account1: Account): AccountDto
+    fun toDto(account: Account): AccountDto
 
-    fun toDtoList(account1: List<Account>): List<AccountDto>
+    fun toDtoList(account: List<Account>): List<AccountDto>
 }

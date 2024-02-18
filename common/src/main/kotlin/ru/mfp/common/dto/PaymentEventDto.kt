@@ -1,6 +1,5 @@
-package ru.mfp.payment.dto
+package ru.mfp.common.dto
 
-import ru.mfp.common.dto.CommonEventDto
 import java.time.LocalDateTime
 import java.util.*
 

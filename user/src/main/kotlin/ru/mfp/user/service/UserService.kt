@@ -1,9 +1,11 @@
 package ru.mfp.user.service
 
+import java.util.UUID
 import ru.mfp.user.dto.UserDto
-import java.util.*
 
-fun interface UserService {
+interface UserService {
 
     fun findById(id: UUID): UserDto
+
+    fun updateRole(id: UUID, newRole: String)
 }

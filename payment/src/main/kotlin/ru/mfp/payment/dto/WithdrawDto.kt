@@ -9,6 +9,5 @@ data class WithdrawDto(
     val accountId: UUID,
     val cardId: UUID,
     val amount: String,
-    val currency: String,
     val createdAt: LocalDateTime
 )

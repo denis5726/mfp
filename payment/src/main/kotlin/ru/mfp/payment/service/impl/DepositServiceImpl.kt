@@ -1,11 +1,11 @@
 package ru.mfp.payment.service.impl
 
+import java.util.UUID
 import mu.KotlinLogging
 import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import ru.mfp.account.repository.AccountRepository
-import ru.mfp.account.repository.CardRepository
+import ru.mfp.account.service.AccountService
 import ru.mfp.common.exception.ResourceNotFoundException
 import ru.mfp.common.model.JwtAuthentication
 import ru.mfp.payment.dto.DepositCreatingRequestDto
@@ -15,7 +15,6 @@ import ru.mfp.payment.mapper.DepositMapper
 import ru.mfp.payment.repository.DepositRepository
 import ru.mfp.payment.service.DepositService
 import ru.mfp.payment.service.PaymentService
-import java.util.*
 
 private val log = KotlinLogging.logger { }
 
@@ -24,8 +23,7 @@ class DepositServiceImpl(
     private val repository: DepositRepository,
     private val mapper: DepositMapper,
     private val paymentService: PaymentService,
-    private val cardRepository: CardRepository,
-    private val accountRepository: AccountRepository
+    private val accountService: AccountService
 ) : DepositService {
     private val pageSize = 30
 
@@ -33,13 +31,16 @@ class DepositServiceImpl(
         mapper.toDto(repository.findByPaymentId(id) ?: throw ResourceNotFoundException("Deposit not found"))
 
 
-    override fun findDeposits(page: Int, authentication: JwtAuthentication): List<DepositDto> =
-        mapper.toDtoList(
-            repository.findByAccountUserIdOrderByCreatedAtDesc(
-                authentication.id,
+    override fun findDeposits(page: Int, authentication: JwtAuthentication): List<DepositDto> {
+        val accounts = accountService.findAccounts(authentication)
+        return mapper.toDtoList(
+            repository.findByAccountIdInOrderByCreatedAtDesc(
+                accounts.map { it.id },
                 PageRequest.of(page, pageSize)
             ).content
         )
+    }
+
 
     @Transactional
     override fun addDeposit(
@@ -47,23 +48,22 @@ class DepositServiceImpl(
         authentication: JwtAuthentication
     ): DepositDto {
         val result = paymentService.doPayment(
-            authentication.id,
+            authentication,
             depositCreatingRequestDto.accountId,
             depositCreatingRequestDto.cardId,
             depositCreatingRequestDto.amount,
             true
         )
         val payment = result.paymentDto
-        val account = accountRepository.findById(depositCreatingRequestDto.accountId).orElseThrow()
-        val deposit = Deposit()
-        deposit.cardId = cardRepository.findById(depositCreatingRequestDto.cardId).orElseThrow()
-        deposit.accountId = account
-        deposit.paymentId = payment.paymentId
-        deposit.operationId = payment.operationId
-        deposit.amount = depositCreatingRequestDto.amount
-        account.amount += deposit.amount
-        accountRepository.save(account)
-        val dto = mapper.toDto(repository.saveAndFlush(deposit))
+        val deposit = Deposit(
+            accountId = depositCreatingRequestDto.accountId,
+            cardId = depositCreatingRequestDto.cardId,
+            paymentId = payment.paymentId,
+            operationId = payment.operationId,
+            amount = depositCreatingRequestDto.amount
+        )
+
+        val dto = mapper.toDto(repository.save(deposit))
         result.messageCallback()
         return dto
     }

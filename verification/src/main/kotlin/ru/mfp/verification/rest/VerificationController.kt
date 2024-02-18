@@ -1,14 +1,14 @@
-package ru.mfp.user.rest
+package ru.mfp.verification.rest
 
+import java.util.*
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import ru.mfp.common.config.security.aop.EmailVerified
 import ru.mfp.common.config.security.aop.New
-import ru.mfp.user.service.VerificationService
 import ru.mfp.common.model.JwtAuthentication
-import java.util.*
+import ru.mfp.verification.service.VerificationService
 
 @RestController
 @RequestMapping("/verification")

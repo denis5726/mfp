@@ -1,5 +1,4 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.jetbrains.kotlin.ir.backend.js.compile
 
 plugins {
     id("org.springframework.boot") version "3.1.4"
@@ -54,6 +53,7 @@ dependencies {
     implementation(project(":payment"))
     implementation(project(":stub"))
     implementation(project(":user"))
+    implementation(project(":verification"))
 
     testImplementation("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")

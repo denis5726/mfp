@@ -1,6 +1,6 @@
 package ru.mfp.payment.kafka.producer
 
-import ru.mfp.payment.dto.PaymentEventDto
+import ru.mfp.common.dto.PaymentEventDto
 
 fun interface PaymentProducer {
 
