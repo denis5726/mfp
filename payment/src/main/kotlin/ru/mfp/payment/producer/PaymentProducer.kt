@@ -1,4 +1,4 @@
-package ru.mfp.payment.kafka.producer
+package ru.mfp.payment.producer
 
 import ru.mfp.common.dto.PaymentEventDto
 

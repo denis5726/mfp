@@ -15,8 +15,8 @@ import ru.mfp.payment.client.PaymentApiClientService
 import ru.mfp.payment.dto.PaymentCreatingRequestDto
 import ru.mfp.payment.exception.PaymentCreatingException
 import ru.mfp.payment.exception.PaymentServiceApiException
-import ru.mfp.payment.kafka.producer.PaymentProducer
 import ru.mfp.payment.model.PaymentCreatingResult
+import ru.mfp.payment.producer.PaymentProducer
 import ru.mfp.payment.service.PaymentService
 
 private val log = KotlinLogging.logger { }

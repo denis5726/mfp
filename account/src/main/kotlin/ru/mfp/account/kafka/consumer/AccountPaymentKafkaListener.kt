@@ -4,11 +4,11 @@ import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.messaging.Message
 import org.springframework.stereotype.Component
 import ru.mfp.account.handler.AccountDepositEventHandler
-import ru.mfp.common.event.EventProcessor
+import ru.mfp.common.event.KafkaEventProcessor
 
 @Component
 class AccountPaymentKafkaListener(
-    private val processor: EventProcessor,
+    private val processor: KafkaEventProcessor,
     private val handler: AccountDepositEventHandler
 ) {
 
