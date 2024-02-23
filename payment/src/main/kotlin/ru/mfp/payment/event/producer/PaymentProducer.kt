@@ -1,4 +1,4 @@
-package ru.mfp.payment.producer
+package ru.mfp.payment.event.producer
 
 import ru.mfp.common.dto.PaymentEventDto
 

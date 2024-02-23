@@ -14,7 +14,7 @@ import ru.mfp.user.dto.TokenDto
 import ru.mfp.user.dto.UserDto
 import ru.mfp.user.exception.AuthorizationException
 import ru.mfp.user.exception.RegistrationException
-import ru.mfp.user.kafka.producer.AuthProducer
+import ru.mfp.user.event.producer.AuthProducer
 import ru.mfp.user.mapper.UserMapper
 import ru.mfp.user.repository.UserRepository
 import ru.mfp.user.service.AuthService

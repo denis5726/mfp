@@ -1,4 +1,4 @@
-package ru.mfp.payment.producer.kafka
+package ru.mfp.payment.event.producer.kafka
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import java.util.*
@@ -8,12 +8,12 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.stereotype.Component
 import ru.mfp.common.dto.PaymentEventDto
-import ru.mfp.payment.producer.PaymentProducer
+import ru.mfp.payment.event.producer.PaymentProducer
 
 private val log = KotlinLogging.logger { }
 
 @Component
-class PaymentProducerImpl(
+class KafkaPaymentProducer(
     private val kafkaTemplate: KafkaTemplate<UUID, String>,
     private val objectMapper: ObjectMapper
 ) : PaymentProducer {
