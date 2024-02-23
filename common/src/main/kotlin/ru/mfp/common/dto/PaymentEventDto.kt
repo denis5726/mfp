@@ -1,7 +1,7 @@
 package ru.mfp.common.dto
 
 import java.time.LocalDateTime
-import java.util.*
+import java.util.UUID
 
 data class PaymentEventDto(
     val userId: UUID,

@@ -8,7 +8,7 @@ import ru.mfp.common.event.EventHandler
 import ru.mfp.email.service.EmailService
 import ru.mfp.user.service.UserService
 
-private val log = KotlinLogging.logger {  }
+private val log = KotlinLogging.logger { }
 
 @Component
 class EmailDepositEventHandler(

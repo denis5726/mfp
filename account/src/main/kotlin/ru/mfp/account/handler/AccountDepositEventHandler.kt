@@ -1,11 +1,11 @@
 package ru.mfp.account.handler
 
+import java.math.BigDecimal
 import org.springframework.stereotype.Component
 import ru.mfp.account.entity.AccountChangeReason
 import ru.mfp.account.service.AccountHistoryService
-import ru.mfp.common.event.EventHandler
 import ru.mfp.common.dto.PaymentEventDto
-import java.math.BigDecimal
+import ru.mfp.common.event.EventHandler
 
 @Component
 class AccountDepositEventHandler(

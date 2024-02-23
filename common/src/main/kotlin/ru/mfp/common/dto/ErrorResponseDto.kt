@@ -1,7 +1,7 @@
 package ru.mfp.common.dto
 
-import org.springframework.http.HttpStatus
 import java.time.LocalDateTime
+import org.springframework.http.HttpStatus
 
 data class ErrorResponseDto(
     val status: HttpStatus,

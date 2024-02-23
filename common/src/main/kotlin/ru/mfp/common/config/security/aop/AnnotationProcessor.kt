@@ -1,8 +1,8 @@
 package ru.mfp.common.config.security.aop
 
+import kotlin.reflect.KClass
 import ru.mfp.common.exception.AuthorizationException
 import ru.mfp.common.model.JwtAuthentication
-import kotlin.reflect.KClass
 
 interface AnnotationProcessor {
 

@@ -2,7 +2,7 @@ package ru.mfp.common.config
 
 import jakarta.persistence.AttributeConverter
 import jakarta.persistence.Converter
-import java.util.*
+import java.util.Currency
 
 @Converter(autoApply = true)
 class CurrencyConverter : AttributeConverter<Currency, String> {

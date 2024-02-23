@@ -1,5 +1,6 @@
 package ru.mfp.user.service.impl
 
+import java.nio.CharBuffer
 import mu.KotlinLogging
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
@@ -17,7 +18,6 @@ import ru.mfp.user.kafka.producer.AuthProducer
 import ru.mfp.user.mapper.UserMapper
 import ru.mfp.user.repository.UserRepository
 import ru.mfp.user.service.AuthService
-import java.nio.CharBuffer
 
 private val log = KotlinLogging.logger { }
 

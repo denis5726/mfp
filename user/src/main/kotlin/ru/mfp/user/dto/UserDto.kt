@@ -1,6 +1,6 @@
 package ru.mfp.user.dto
 
-import java.util.*
+import java.util.UUID
 
 data class UserDto(
     val id: UUID,

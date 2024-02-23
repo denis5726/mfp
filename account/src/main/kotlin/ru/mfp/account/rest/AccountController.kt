@@ -2,10 +2,10 @@ package ru.mfp.account.rest
 
 import org.springframework.web.bind.annotation.*
 import ru.mfp.account.dto.AccountCreatingRequestDto
-import ru.mfp.common.model.JwtAuthentication
 import ru.mfp.account.service.AccountService
 import ru.mfp.common.config.security.aop.NotBanned
 import ru.mfp.common.config.security.aop.SolvencyVerified
+import ru.mfp.common.model.JwtAuthentication
 
 @RestController
 @RequestMapping("/accounts")

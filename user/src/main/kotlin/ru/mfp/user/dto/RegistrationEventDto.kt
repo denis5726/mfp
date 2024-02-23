@@ -1,8 +1,8 @@
 package ru.mfp.user.dto
 
-import ru.mfp.common.dto.CommonEventDto
 import java.time.LocalDateTime
-import java.util.*
+import java.util.UUID
+import ru.mfp.common.dto.CommonEventDto
 
 data class RegistrationEventDto(
     override val eventId: UUID,

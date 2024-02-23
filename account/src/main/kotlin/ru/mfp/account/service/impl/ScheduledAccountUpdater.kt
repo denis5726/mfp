@@ -21,8 +21,10 @@ class ScheduledAccountUpdater(
 ) {
     @Value("\${mfp.account.time-diff}")
     private var timeDiffInSeconds = 0L
+
     @Value("\${mfp.account.percent-per-day}")
     private var percentPerDay = 0.0
+
     @Value("\${mfp.account.scheduled-updater-rate}")
     private var rateInMillis = 0L
     private val defaultScale = 30

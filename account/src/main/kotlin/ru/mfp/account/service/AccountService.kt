@@ -1,7 +1,7 @@
 package ru.mfp.account.service
 
-import ru.mfp.account.dto.AccountDto
 import ru.mfp.account.dto.AccountCreatingRequestDto
+import ru.mfp.account.dto.AccountDto
 import ru.mfp.common.model.JwtAuthentication
 
 interface AccountService {

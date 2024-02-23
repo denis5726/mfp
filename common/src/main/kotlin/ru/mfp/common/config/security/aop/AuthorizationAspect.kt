@@ -1,6 +1,7 @@
 package ru.mfp.common.config.security.aop
 
 import jakarta.annotation.PostConstruct
+import kotlin.reflect.KClass
 import org.aspectj.lang.JoinPoint
 import org.aspectj.lang.annotation.Aspect
 import org.aspectj.lang.annotation.Before
@@ -8,7 +9,6 @@ import org.aspectj.lang.reflect.MethodSignature
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Component
 import ru.mfp.common.model.JwtAuthentication
-import kotlin.reflect.KClass
 
 @Component
 @Aspect

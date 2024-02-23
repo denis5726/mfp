@@ -1,9 +1,9 @@
 package ru.mfp.payment.service
 
-import ru.mfp.payment.dto.DepositDto
-import ru.mfp.payment.dto.DepositCreatingRequestDto
+import java.util.UUID
 import ru.mfp.common.model.JwtAuthentication
-import java.util.*
+import ru.mfp.payment.dto.DepositCreatingRequestDto
+import ru.mfp.payment.dto.DepositDto
 
 interface DepositService {
 

@@ -1,9 +1,9 @@
 package ru.mfp.common.model
 
+import java.util.UUID
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
-import java.util.*
 
 data class JwtAuthentication(
     val id: UUID,

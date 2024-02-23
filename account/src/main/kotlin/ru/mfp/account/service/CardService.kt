@@ -1,9 +1,9 @@
 package ru.mfp.account.service
 
-import ru.mfp.account.dto.CardDto
+import java.util.UUID
 import ru.mfp.account.dto.CardCreatingRequestDto
+import ru.mfp.account.dto.CardDto
 import ru.mfp.common.model.JwtAuthentication
-import java.util.*
 
 interface CardService {
 

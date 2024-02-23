@@ -1,6 +1,8 @@
 package ru.mfp.user.kafka.producer.impl
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import java.time.LocalDateTime
+import java.util.*
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.kafka.core.KafkaTemplate
@@ -8,8 +10,6 @@ import org.springframework.stereotype.Component
 import ru.mfp.user.dto.RegistrationEventDto
 import ru.mfp.user.entity.User
 import ru.mfp.user.kafka.producer.AuthProducer
-import java.time.LocalDateTime
-import java.util.*
 
 @Component
 class AuthProducerImpl(

@@ -1,6 +1,6 @@
 package ru.mfp.account.dto
 
-import java.util.*
+import java.util.UUID
 
 data class CardCreatingRequestDto(
     val bankAccountId: UUID,

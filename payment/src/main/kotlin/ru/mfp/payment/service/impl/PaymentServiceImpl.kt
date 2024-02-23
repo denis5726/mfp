@@ -40,8 +40,8 @@ class PaymentServiceImpl(
     ): PaymentCreatingResult {
         val card = cardRepository.findCardById(cardId, authentication)
         val account = accountRepository.findAccounts(authentication)
-            .firstOrNull {it.id == accountId } ?:
-            throw PaymentCreatingException("Account with id=$accountId is not found")
+            .firstOrNull { it.id == accountId }
+            ?: throw PaymentCreatingException("Account with id=$accountId is not found")
         if (account.currency != card.currency) {
             throw PaymentCreatingException("Account and card currencies is not equal!")
         }

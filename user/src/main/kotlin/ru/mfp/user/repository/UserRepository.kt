@@ -1,8 +1,8 @@
 package ru.mfp.user.repository
 
+import java.util.UUID
 import org.springframework.data.jpa.repository.JpaRepository
 import ru.mfp.user.entity.User
-import java.util.*
 
 interface UserRepository : JpaRepository<User, UUID> {
 

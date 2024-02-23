@@ -5,9 +5,9 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import ru.mfp.common.config.security.aop.NotBanned
-import ru.mfp.user.service.AuthService
 import ru.mfp.user.dto.SignInDto
 import ru.mfp.user.dto.SignUpDto
+import ru.mfp.user.service.AuthService
 
 @RestController
 @RequestMapping("/auth")

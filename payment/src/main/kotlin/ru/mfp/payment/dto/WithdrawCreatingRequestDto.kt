@@ -1,7 +1,7 @@
 package ru.mfp.payment.dto
 
 import java.math.BigDecimal
-import java.util.*
+import java.util.UUID
 
 data class WithdrawCreatingRequestDto(
     val accountId: UUID,

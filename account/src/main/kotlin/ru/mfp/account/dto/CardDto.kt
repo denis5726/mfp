@@ -1,7 +1,7 @@
 package ru.mfp.account.dto
 
 import java.time.LocalDateTime
-import java.util.*
+import java.util.UUID
 
 data class CardDto(
     val id: UUID,

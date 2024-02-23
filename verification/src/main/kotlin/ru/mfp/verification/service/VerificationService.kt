@@ -1,7 +1,7 @@
 package ru.mfp.verification.service
 
-import ru.mfp.common.model.JwtAuthentication
 import java.util.UUID
+import ru.mfp.common.model.JwtAuthentication
 
 interface VerificationService {
 

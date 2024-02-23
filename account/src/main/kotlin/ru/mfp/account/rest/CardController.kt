@@ -1,12 +1,12 @@
 package ru.mfp.account.rest
 
+import java.util.*
 import org.springframework.web.bind.annotation.*
 import ru.mfp.account.dto.CardCreatingRequestDto
-import ru.mfp.common.model.JwtAuthentication
 import ru.mfp.account.service.CardService
 import ru.mfp.common.config.security.aop.EmailVerifiedOrHigher
 import ru.mfp.common.config.security.aop.NotBanned
-import java.util.*
+import ru.mfp.common.model.JwtAuthentication
 
 @RestController
 @RequestMapping("/cards")

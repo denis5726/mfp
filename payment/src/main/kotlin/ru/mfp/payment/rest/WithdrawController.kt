@@ -3,8 +3,8 @@ package ru.mfp.payment.rest
 import org.springframework.web.bind.annotation.*
 import ru.mfp.common.config.security.aop.NotBanned
 import ru.mfp.common.config.security.aop.SolvencyVerified
-import ru.mfp.payment.dto.WithdrawCreatingRequestDto
 import ru.mfp.common.model.JwtAuthentication
+import ru.mfp.payment.dto.WithdrawCreatingRequestDto
 import ru.mfp.payment.service.WithdrawService
 
 @RestController

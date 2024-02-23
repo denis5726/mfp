@@ -1,6 +1,13 @@
 package ru.mfp.common.config
 
-import org.apache.kafka.common.serialization.*
+import java.util.UUID
+import java.util.function.Supplier
+import org.apache.kafka.common.serialization.Deserializer
+import org.apache.kafka.common.serialization.Serializer
+import org.apache.kafka.common.serialization.StringDeserializer
+import org.apache.kafka.common.serialization.StringSerializer
+import org.apache.kafka.common.serialization.UUIDDeserializer
+import org.apache.kafka.common.serialization.UUIDSerializer
 import org.springframework.beans.factory.ObjectProvider
 import org.springframework.boot.autoconfigure.kafka.DefaultKafkaConsumerFactoryCustomizer
 import org.springframework.boot.autoconfigure.kafka.DefaultKafkaProducerFactoryCustomizer
@@ -15,8 +22,6 @@ import org.springframework.kafka.core.ProducerFactory
 import org.springframework.kafka.support.LoggingProducerListener
 import org.springframework.kafka.support.ProducerListener
 import org.springframework.kafka.support.converter.RecordMessageConverter
-import java.util.*
-import java.util.function.Supplier
 
 @Configuration
 class KafkaConfig(

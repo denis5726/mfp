@@ -9,13 +9,15 @@ import ru.mfp.account.model.AccountSnapshot
 
 interface AccountHistoryRecordRepository : JpaRepository<AccountHistoryRecord, UUID> {
 
-    @Query("""
+    @Query(
+        """
         SELECT 
             a.account.id AS id, 
             SUM(a.diff) AS amount 
         FROM AccountHistoryRecord a 
         WHERE a.createdAt <= :time 
         GROUP BY a.account.id
-    """)
+    """
+    )
     fun getSnapshots(time: ZonedDateTime): List<AccountSnapshot>
 }
